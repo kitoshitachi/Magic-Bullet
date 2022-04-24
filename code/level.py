@@ -29,7 +29,7 @@ class Level:
 				if col == 'x':
 					Wall((x,y),[self.visible_sprites,self.obstacle_sprites])
 				if col == 'p':
-					self.player = Player((x,y),[self.visible_sprites],self.obstacle_sprites)
+					self.player = Player((x,y),[self.visible_sprites],self.visible_sprites,self.obstacle_sprites)
 
 	def run(self):
 		# update and draw the game
@@ -37,6 +37,7 @@ class Level:
 		self.minimap.update()
 		
 		self.visible_sprites.draw(self.player)
+
 		self.minimap.draw()
 
 class YSortCameraGroup(pygame.sprite.Group):

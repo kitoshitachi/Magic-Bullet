@@ -1,15 +1,18 @@
 import pygame
+from pyparsing import original_text_for
 from settings import *
-
+from math import atan2,degrees,pi
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self, pos, groups, obstacle_sprites):
+	def __init__(self, pos, groups,visible_sprites, obstacle_sprites):
 		super().__init__(groups)
 		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
 		self.rect = self.image.get_rect(topleft=pos)
 		self.obstacle_sprites = obstacle_sprites
 		self.direction = pygame.math.Vector2()
 		self.speed = 5
+		self.original_image = self.image
+		self.visible_sprites = visible_sprites
 
 	def input(self):
 		keys = pygame.key.get_pressed()
@@ -27,6 +30,14 @@ class Player(pygame.sprite.Sprite):
 			self.direction.x = -1
 		else:
 			self.direction.x = 0
+		
+	def rotate_player(self):
+		mx,my = pygame.mouse.get_pos()
+		original_rect = self.rect
+		dx, dy = mx - original_rect.centerx + self.visible_sprites.offset.x , my - original_rect.centery + self.visible_sprites.offset.y
+		angle = (180 / pi) * - atan2(dy, dx) 
+		self.image = pygame.transform.rotate(self.original_image, int(angle))
+		self.rect = self.image.get_rect(center=original_rect.center)
 
 	def move(self, speed):
 		if self.direction.magnitude() != 0:
@@ -42,7 +53,7 @@ class Player(pygame.sprite.Sprite):
 			for sprite in self.obstacle_sprites:
 				if sprite.rect.colliderect(self.rect):
 					if self.direction.x > 0:  # moving right
-						self.rect.right = sprite.rect.leftW
+						self.rect.right = sprite.rect.left
 					if self.direction.x < 0:  # moving left
 						self.rect.left = sprite.rect.right
 
@@ -57,3 +68,4 @@ class Player(pygame.sprite.Sprite):
 	def update(self):
 		self.input()
 		self.move(self.speed)
+		self.rotate_player()
