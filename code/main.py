@@ -10,6 +10,7 @@ class Game:
 		pygame.init()
 		
 		self.screen = pygame.display.set_mode((WIDTH,HEIGTH))
+  
 		pygame.display.set_caption('Magic Bullet')
   
 		self.clock = pygame.time.Clock()
@@ -22,7 +23,6 @@ class Game:
 				if event.type == pygame.QUIT:
 					pygame.quit()
 					sys.exit()
-				# self.handle(event)
 
 			self.screen.fill('black')
 			self.level.run()
