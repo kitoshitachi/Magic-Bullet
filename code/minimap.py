@@ -24,8 +24,8 @@ class Minimap(pygame.sprite.Sprite):
 	def update(self):
 		self.player_surface.fill((0, 0, 0, 0))
 
-		x = self.player.rect.topleft[0] // TILESIZE
-		y = self.player.rect.topleft[1] // TILESIZE
+		x = self.player.rect.topleft[0] / TILESIZE
+		y = self.player.rect.topleft[1] / TILESIZE
 		pygame.draw.rect(self.player_surface, (255, 0, 0), pygame.Rect(
 			x * MINIMAP_TILE_SIZE, y * MINIMAP_TILE_SIZE, MINIMAP_TILE_SIZE, MINIMAP_TILE_SIZE))
 

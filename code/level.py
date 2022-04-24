@@ -33,9 +33,10 @@ class Level:
 
 	def run(self):
 		# update and draw the game
-		self.visible_sprites.draw(self.player)
 		self.visible_sprites.update()
 		self.minimap.update()
+		
+		self.visible_sprites.draw(self.player)
 		self.minimap.draw()
 
 class YSortCameraGroup(pygame.sprite.Group):
