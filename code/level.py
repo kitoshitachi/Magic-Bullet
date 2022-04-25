@@ -4,6 +4,7 @@ from minimap import Minimap
 from settings import *
 from wall import Wall
 from player import Player
+from bullet import Bullet
 
 class Level:
 	def __init__(self):
@@ -12,7 +13,7 @@ class Level:
 		self.display_surface = pygame.display.get_surface()
 
 		# sprite group setup
-		self.visible_sprites =  YSortCameraGroup()
+		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
 
 		# sprite setup
@@ -29,7 +30,10 @@ class Level:
 				if col == 'x':
 					Wall((x,y),[self.visible_sprites,self.obstacle_sprites])
 				if col == 'p':
-					self.player = Player((x,y),[self.visible_sprites],self.visible_sprites,self.obstacle_sprites)
+					self.player = Player((x,y),[self.visible_sprites],self.visible_sprites,self.obstacle_sprites,self.create_bullet)
+
+	def create_bullet(self):
+		self.bullets = Bullet(self.player,[self.visible_sprites])
 
 	def run(self):
 		# update and draw the game
