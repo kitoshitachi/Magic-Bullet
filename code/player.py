@@ -1,15 +1,20 @@
 import pygame
+from bullet import Bullet
 from settings import *
 from math import atan2,degrees
-from debug import debug
 class Player(pygame.sprite.Sprite):
-	def __init__(self, pos, groups,visible_sprites:pygame.sprite.Group,obstacle_sprites:pygame.sprite.Group,create_shoot):
-		super().__init__(groups)
+	def __init__(self, pos, Level):
+
+		self.level =  Level
+		self.visible_sprites = Level.visible_sprites
+		self.obstacle_sprites = Level.obstacle_sprites
+		super().__init__(self.visible_sprites,Level.player_sprites)
+
+		self.bullet_sprites = Level.bullet_sprites
 		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
 		self.rect = self.image.get_rect(topleft=pos)
 		self.hitbox = self.rect.inflate(0,-26)
-		self.visible_sprites = visible_sprites
-		self.obstacle_sprites = obstacle_sprites
+
 		#movement
 		self.direction = pygame.math.Vector2(0,0)
 		self.speed = 5
@@ -17,7 +22,6 @@ class Player(pygame.sprite.Sprite):
 		self.attacking = False
 		self.attack_cooldown = 400
 		self.attack_time = None
-		self.shoot = create_shoot
 
 		#rotate
 		self.original_image = self.image
@@ -38,13 +42,11 @@ class Player(pygame.sprite.Sprite):
 		else:
 			self.direction.x = 0
 		
-
 		left_mouse_pressed = pygame.mouse.get_pressed()[0]
 		if left_mouse_pressed and not self.attacking:
 			self.attacking = True 
 			self.attack_time = pygame.time.get_ticks()
-			self.shoot()
-		
+			self.shoot()	
 		
 	def rotate_player(self):
 		mx,my = pygame.mouse.get_pos()
@@ -54,20 +56,23 @@ class Player(pygame.sprite.Sprite):
 		self.image = pygame.transform.rotate(self.original_image, -self.angle)
 		self.rect = self.image.get_rect(center=original_rect.center)
 
+	def shoot(self):
+		Bullet(self,self.level)
+
 	def move(self,speed):
 		if self.direction.magnitude() != 0:
 				self.direction = self.direction.normalize()
 
 		self.hitbox.x += self.direction.x * speed
-		self.collision_horizontal()
+		self.collision_horizontal(self.obstacle_sprites)
 				
 		self.hitbox.y += self.direction.y * speed
-		self.collision_vertical()
+		self.collision_vertical(self.obstacle_sprites)
 
 		self.rect.center = self.hitbox.center
 
-	def collision_horizontal(self):
-		for sprite in self.obstacle_sprites:
+	def collision_horizontal(self,obstacle_sprites):
+		for sprite in obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.x > 0:  # moving right
 					self.hitbox.right = sprite.hitbox.left
@@ -75,8 +80,8 @@ class Player(pygame.sprite.Sprite):
 				elif self.direction.x < 0:  # moving left
 					self.hitbox.left = sprite.hitbox.right
 		
-	def collision_vertical(self):
-		for sprite in self.obstacle_sprites:
+	def collision_vertical(self,obstacle_sprites):
+		for sprite in obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.y > 0:  # moving down
 					self.hitbox.bottom = sprite.hitbox.top

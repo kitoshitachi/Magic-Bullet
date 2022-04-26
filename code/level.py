@@ -1,7 +1,6 @@
-from pydoc import plain
 import pygame
-from minimap import Minimap 
 from settings import *
+from minimap import Minimap 
 from wall import Wall
 from player import Player
 from bullet import Bullet
@@ -16,7 +15,7 @@ class Level:
 		# sprite group setup
 		self.visible_sprites = YSortCameraGroup()
 		self.obstacle_sprites = pygame.sprite.Group()
-		self.bullets_sprites = pygame.sprite.Group()
+		self.bullet_sprites = pygame.sprite.Group()
 		self.player_sprites = pygame.sprite.Group()
 		# sprite setup
 		self.create_map()
@@ -31,10 +30,7 @@ class Level:
 				if col == 'x':
 					Wall((x,y),[self.visible_sprites,self.obstacle_sprites])
 				if col == 'p':
-					self.player = Player((x,y),[self.visible_sprites,self.player_sprites],self.visible_sprites,self.obstacle_sprites,self.create_shoot)
-
-	def create_shoot(self):
-		Bullet(self.player,[self.visible_sprites,self.bullets_sprites])
+					self.player = Player((x,y),self)
 
 	def run(self):
 		# update and draw the game
