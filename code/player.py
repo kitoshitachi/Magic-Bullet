@@ -22,6 +22,8 @@ class Player(pygame.sprite.Sprite):
 		self.attacking = False
 		self.attack_cooldown = 400
 		self.attack_time = None
+		self.stunt_count_down = 0
+		self.prev_stunt_time = 0
 
 		#rotate
 		self.original_image = self.image
@@ -95,8 +97,19 @@ class Player(pygame.sprite.Sprite):
 			if current_time - self.attack_time >= self.attack_cooldown:
 				self.attacking = False
 
+	def stunted(self):
+		self.prev_stunt_time = pygame.time.get_ticks()
+		self.stunt_count_down = PLAYER_STUNT_DURATION
+		self.direction = pygame.math.Vector2()
+
 	def update(self):
-		self.input()
+
+		if (self.stunt_count_down <= 0):
+			self.input()	
+		else:
+			self.stunt_count_down -= pygame.time.get_ticks() - self.prev_stunt_time
+			self.prev_stunt_time = pygame.time.get_ticks() 
+		
 		self.cooldown()
-		self.move(self.speed)
+		self.move(self.speed) 
 		self.rotate_player()

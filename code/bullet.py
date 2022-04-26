@@ -1,3 +1,4 @@
+import itertools
 import pygame
 from settings import BULLET_MAX_TIME_TO_LIVE
 from debug import debug
@@ -10,7 +11,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.bullet_sprites = Level.bullet_sprites
 		self.player_sprites = Level.player_sprites
 		super().__init__(Level.visible_sprites,self.bullet_sprites)
-		self.image = pygame.image.load("../graphics/weapons/lance/full.png").convert_alpha()
+		self.image = pygame.image.load("../graphics/test/BulletProjectile.png").convert_alpha()
 		
 		self.image = pygame.transform.rotate(self.image,-player.angle)
 		self.rect = self.image.get_rect(topleft = player.rect.topleft)
@@ -21,8 +22,11 @@ class Bullet(pygame.sprite.Sprite):
 		self.speed = 12
 		self.time_to_live = BULLET_MAX_TIME_TO_LIVE
 
-	def collision_horizontal(self,sprites):
-		for sprite in sprites:
+	def collision_horizontal(self):
+		for sprite in itertools.chain(self.bullet_sprites, self.obstacle_sprites):
+			if sprite is self:
+				continue
+
 			if sprite.hitbox.colliderect(self.hitbox):
 				self.time_to_live -= 1
 				if self.direction.x > 0:  # moving right
@@ -33,8 +37,11 @@ class Bullet(pygame.sprite.Sprite):
 					self.hitbox.left = sprite.hitbox.right
 					self.direction.reflect_ip(pygame.math.Vector2(1,0))
 
-	def collision_vertical(self,sprites):
-		for sprite in sprites:
+	def collision_vertical(self):
+		for sprite in itertools.chain(self.bullet_sprites, self.obstacle_sprites):
+			if sprite is self:
+				continue	
+
 			if sprite.hitbox.colliderect(self.hitbox):
 				self.time_to_live -= 1
 				if self.direction.y > 0:  # moving down
@@ -47,24 +54,22 @@ class Bullet(pygame.sprite.Sprite):
 	def player_collision(self):
 		for player in pygame.sprite.spritecollide(self,self.player_sprites,False):
 			if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
-				player.kill()
+				self.stunt_count_down = 500
+				player.stunted()
 				
 	def move(self,speed):
-
+		
 		self.hitbox.x += self.direction.x * speed
-		self.collision_horizontal(self.obstacle_sprites)
-		self.collision_horizontal(self.bullet_sprites)
+		self.collision_horizontal()
 		
 		self.hitbox.y += self.direction.y * speed
-		self.collision_vertical(self.obstacle_sprites)
-		self.collision_vertical(self.bullet_sprites)
+		self.collision_vertical()
 
 		self.player_collision()
 		
 		self.rect.center = self.hitbox.center
 
 	def update(self):
-
 		self.move(self.speed)
 
 		if self.time_to_live == 0:

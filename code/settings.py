@@ -5,6 +5,7 @@ FPS      = 60
 TILESIZE = 64
 MINIMAP_TILE_SIZE = 4
 BULLET_MAX_TIME_TO_LIVE = 3
+PLAYER_STUNT_DURATION = 500
 
 WORLD_MAP = [
 ['x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x','x'],
