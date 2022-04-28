@@ -1,5 +1,6 @@
 import itertools
 import pygame
+from utils import Utils
 from settings import BULLET_MAX_TIME_TO_LIVE
 from debug import debug
 
@@ -56,21 +57,10 @@ class Bullet(pygame.sprite.Sprite):
 			if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
 				self.stunt_count_down = 500
 				player.stunted()
-				
-	def move(self,speed):
-		
-		self.hitbox.x += self.direction.x * speed
-		self.collision_horizontal()
-		
-		self.hitbox.y += self.direction.y * speed
-		self.collision_vertical()
-
-		self.player_collision()
-		
-		self.rect.center = self.hitbox.center
 
 	def update(self):
-		self.move(self.speed)
+		Utils.move(self,self.speed)
+		self.player_collision()
 
 		if self.time_to_live == 0:
 			self.kill()

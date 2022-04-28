@@ -1,5 +1,6 @@
 import pygame
 from bullet import Bullet
+from utils import Utils
 from settings import *
 from math import atan2,degrees
 class Player(pygame.sprite.Sprite):
@@ -49,32 +50,13 @@ class Player(pygame.sprite.Sprite):
 			self.attacking = True 
 			self.attack_time = pygame.time.get_ticks()
 			self.shoot()	
-		
-	def rotate_player(self):
-		mx,my = pygame.mouse.get_pos()
-		original_rect = self.rect
-		dx, dy = mx - original_rect.centerx + self.visible_sprites.offset.x , my - original_rect.centery + self.visible_sprites.offset.y
-		self.angle = degrees(atan2(dy, dx))
-		self.image = pygame.transform.rotate(self.original_image, -self.angle)
-		self.rect = self.image.get_rect(center=original_rect.center)
 
 	def shoot(self):
 		Bullet(self,self.level)
 
-	def move(self,speed):
-		if self.direction.magnitude() != 0:
-				self.direction = self.direction.normalize()
-
-		self.hitbox.x += self.direction.x * speed
-		self.collision_horizontal(self.obstacle_sprites)
-				
-		self.hitbox.y += self.direction.y * speed
-		self.collision_vertical(self.obstacle_sprites)
-
-		self.rect.center = self.hitbox.center
-
-	def collision_horizontal(self,obstacle_sprites):
-		for sprite in obstacle_sprites:
+	def collision_horizontal(self):
+		print(2)
+		for sprite in self.obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.x > 0:  # moving right
 					self.hitbox.right = sprite.hitbox.left
@@ -82,8 +64,8 @@ class Player(pygame.sprite.Sprite):
 				elif self.direction.x < 0:  # moving left
 					self.hitbox.left = sprite.hitbox.right
 		
-	def collision_vertical(self,obstacle_sprites):
-		for sprite in obstacle_sprites:
+	def collision_vertical(self):
+		for sprite in self.obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.y > 0:  # moving down
 					self.hitbox.bottom = sprite.hitbox.top
@@ -111,5 +93,9 @@ class Player(pygame.sprite.Sprite):
 			self.prev_stunt_time = pygame.time.get_ticks() 
 		
 		self.cooldown()
-		self.move(self.speed) 
-		self.rotate_player()
+		Utils.move(self, self.speed)
+
+		mouse_pos = pygame.math.Vector2(pygame.mouse.get_pos())
+		mouse_pos += self.visible_sprites.offset
+
+		Utils.face_toward(self,mouse_pos)
