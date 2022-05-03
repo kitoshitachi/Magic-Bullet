@@ -1,6 +1,6 @@
-from turtle import pos
 import pygame
-from settings import *
+
+from settings import MINIMAP_TILE_SIZE, TILESIZE, WORLD_MAP
 
 class Minimap(pygame.sprite.Sprite):
 	def __init__(self, pos, player):

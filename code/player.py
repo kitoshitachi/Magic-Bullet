@@ -7,9 +7,8 @@ class Player(pygame.sprite.Sprite):
 	def __init__(self, pos, Level):
 
 		self.level =  Level
-		self.visible_sprites = Level.visible_sprites
-		self.obstacle_sprites = Level.obstacle_sprites
-		super().__init__(self.visible_sprites,Level.player_sprites)
+
+		super().__init__(self.level.visible_sprites,self.level.player_sprites)
 
 		self.bullet_sprites = Level.bullet_sprites
 		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
@@ -55,8 +54,7 @@ class Player(pygame.sprite.Sprite):
 		Bullet(self,self.level)
 
 	def collision_horizontal(self):
-		print(2)
-		for sprite in self.obstacle_sprites:
+		for sprite in self.level.obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.x > 0:  # moving right
 					self.hitbox.right = sprite.hitbox.left
@@ -65,7 +63,7 @@ class Player(pygame.sprite.Sprite):
 					self.hitbox.left = sprite.hitbox.right
 		
 	def collision_vertical(self):
-		for sprite in self.obstacle_sprites:
+		for sprite in self.level.obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.y > 0:  # moving down
 					self.hitbox.bottom = sprite.hitbox.top
@@ -96,6 +94,6 @@ class Player(pygame.sprite.Sprite):
 		Utils.move(self, self.speed)
 
 		mouse_pos = pygame.math.Vector2(pygame.mouse.get_pos())
-		mouse_pos += self.visible_sprites.offset
+		mouse_pos += self.level.visible_sprites.offset
 
 		Utils.face_toward(self,mouse_pos)
