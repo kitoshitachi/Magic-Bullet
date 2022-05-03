@@ -8,10 +8,8 @@ class Bullet(pygame.sprite.Sprite):
 	def __init__(self,player,Level):
 		self.owner = player
 		self.level = Level
-		self.obstacle_sprites = Level.obstacle_sprites
-		self.bullet_sprites = Level.bullet_sprites
-		self.player_sprites = Level.player_sprites
-		super().__init__(Level.visible_sprites,self.bullet_sprites)
+		
+		super().__init__(self.level.visible_sprites,self.level.bullet_sprites)
 		self.image = pygame.image.load("../graphics/test/BulletProjectile.png").convert_alpha()
 		
 		self.image = pygame.transform.rotate(self.image,-player.angle)
@@ -24,7 +22,7 @@ class Bullet(pygame.sprite.Sprite):
 		self.time_to_live = BULLET_MAX_TIME_TO_LIVE
 
 	def collision_horizontal(self):
-		for sprite in itertools.chain(self.bullet_sprites, self.obstacle_sprites):
+		for sprite in itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites):
 			if sprite is self:
 				continue
 
@@ -39,7 +37,7 @@ class Bullet(pygame.sprite.Sprite):
 					self.direction.reflect_ip(pygame.math.Vector2(1,0))
 
 	def collision_vertical(self):
-		for sprite in itertools.chain(self.bullet_sprites, self.obstacle_sprites):
+		for sprite in itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites):
 			if sprite is self:
 				continue	
 
@@ -53,7 +51,7 @@ class Bullet(pygame.sprite.Sprite):
 					self.direction.reflect_ip(pygame.math.Vector2(0,-1))
 
 	def player_collision(self):
-		for player in pygame.sprite.spritecollide(self,self.player_sprites,False):
+		for player in pygame.sprite.spritecollide(self,self.level.player_sprites,False):
 			if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
 				self.stunt_count_down = 500
 				player.stunted()
@@ -61,8 +59,7 @@ class Bullet(pygame.sprite.Sprite):
 	def update(self):
 		Utils.move(self,self.speed)
 		self.player_collision()
-
-		if self.time_to_live == 0:
+		if self.time_to_live <= 0:
 			self.kill()
 
 
