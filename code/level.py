@@ -1,9 +1,10 @@
+import random
 import pygame
-from settings import *
+from NPC import NPC
+from settings import TILESIZE, WORLD_MAP, CREATE_NPC_DURATION
 from minimap import Minimap 
 from wall import Wall
 from player import Player
-from bullet import Bullet
 from debug import debug
 
 class Level:
@@ -17,10 +18,17 @@ class Level:
 		self.obstacle_sprites = pygame.sprite.Group()
 		self.bullet_sprites = pygame.sprite.Group()
 		self.player_sprites = pygame.sprite.Group()
+		self.NPC_sprites = pygame.sprite.Group()
 		# sprite setup
+		self.No_sprites = []
 		self.create_map()
+		self.create_player()
+		self.create_NPC()
 		# others
 		self.minimap = Minimap((16, 16), self.player)
+
+		self.createNPC_time = 0
+
 
 	def create_map(self):
 		for row_index,row in enumerate(WORLD_MAP):
@@ -29,11 +37,24 @@ class Level:
 				y = row_index * TILESIZE
 				if col == 'x':
 					Wall((x,y),[self.visible_sprites,self.obstacle_sprites])
-				if col == 'p':
-					self.player = Player((x,y),self)
+				if col == ' ':
+					self.No_sprites.append((x,y))
+					
 
-	def run(self):
-		# update and draw the game
+	def create_player(self):
+		self.player = Player(random.choice(self.No_sprites),self)
+
+	def create_NPC(self):
+		NPC(random.choice(self.No_sprites),self)
+		self.createNPC_time = pygame.time.get_ticks()
+
+	def cooldown_create_NPC(self):
+		current_time = pygame.time.get_ticks()
+		if NPC.Amount < 10 and current_time - self.createNPC_time >= CREATE_NPC_DURATION:
+			self.create_NPC()
+
+	def run(self):	
+		self.cooldown_create_NPC()
 		self.visible_sprites.update()
 		self.minimap.update()
 		
