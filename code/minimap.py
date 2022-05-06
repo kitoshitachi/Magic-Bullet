@@ -5,7 +5,7 @@ from settings import MINIMAP_TILE_SIZE, TILESIZE, WORLD_MAP
 class Minimap(pygame.sprite.Sprite):
 	def __init__(self, pos, player):
 		super().__init__()
-		self.image = pygame.image.load('../graphics/test/rock.png').convert_alpha()
+		self.image = pygame.image.load('graphics/test/rock.png').convert_alpha()
 		self.pos = pos
 		self.player = player
 

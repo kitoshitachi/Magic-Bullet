@@ -1,9 +1,11 @@
-import pygame 
+import pygame
+from game_object import GameObject 
 from settings import *
 
-class Wall(pygame.sprite.Sprite):
-	def __init__(self,pos,groups):
-		super().__init__(groups)
-		self.image = pygame.image.load('../graphics/test/rock.png').convert_alpha()
-		self.rect = self.image.get_rect(topleft = pos)
-		self.hitbox = self.rect.inflate(0,-10)
+
+class Wall(GameObject):
+	def __init__(self,pos,level):
+		super().__init__([level.obstacle_sprites])
+
+		self.rect = pygame.Rect(pos[0], pos[1], TILESIZE, TILESIZE)
+		self.hitbox = self.rect.inflate(0, -5)

@@ -1,19 +1,20 @@
 import pygame
 from bullet import Bullet
+from game_object import GameObject
 from utils import Utils
 from settings import *
 from math import atan2,degrees
-class Player(pygame.sprite.Sprite):
+
+
+class Player(GameObject):
 	def __init__(self, pos, Level):
-
 		self.level =  Level
-
-		super().__init__(self.level.visible_sprites,self.level.player_sprites)
-
+		self.visible_sprites = Level.visible_sprites
+		self.obstacle_sprites = Level.obstacle_sprites
+		
+		super().__init__([Level.visible_sprites, Level.player_sprites], 'graphics/test/player.png', pos, (-2, -13))
 		self.bullet_sprites = Level.bullet_sprites
-		self.image = pygame.image.load('../graphics/test/player.png').convert_alpha()
-		self.rect = self.image.get_rect(topleft=pos)
-		self.hitbox = self.rect.inflate(0,-26)
+
 
 		#movement
 		self.direction = pygame.math.Vector2(0,0)
@@ -54,7 +55,7 @@ class Player(pygame.sprite.Sprite):
 		Bullet(self,self.level)
 
 	def collision_horizontal(self):
-		for sprite in self.level.obstacle_sprites:
+		for sprite in self.obstacle_sprites:
 			if sprite.hitbox.colliderect(self.hitbox):
 				if self.direction.x > 0:  # moving right
 					self.hitbox.right = sprite.hitbox.left
