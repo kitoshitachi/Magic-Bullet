@@ -1,5 +1,6 @@
 import pygame, sys
-from settings import FPS, HEIGHT, WIDTH
+from tilesets import Tilesets
+from settings import *
 from level import Level
 
 class Game:
@@ -8,13 +9,17 @@ class Game:
 		# general setup
 		pygame.init()
 		
-		self.screen = pygame.display.set_mode((WIDTH,HEIGHT))
+		self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE | pygame.SCALED)
+		self.display_surface = pygame.display.get_surface()
+		Tilesets.init()
+
+		pygame.image.load('graphics/pipoya_grass.png').convert_alpha()
   
 		pygame.display.set_caption('Magic Bullet')
   
 		self.clock = pygame.time.Clock()
 
-		self.level = Level()
+		self.level = Level('map1')
 	
 	def run(self):
 		while True:
@@ -25,6 +30,7 @@ class Game:
 
 			self.screen.fill('black')
 			self.level.run()
+
 			pygame.display.update()
 			self.clock.tick(FPS)
 

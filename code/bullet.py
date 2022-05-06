@@ -1,24 +1,20 @@
 import itertools
 import pygame
+from game_object import GameObject
 from utils import Utils
 from settings import BULLET_MAX_TIME_TO_LIVE
 from debug import debug
 
-class Bullet(pygame.sprite.Sprite):
+class Bullet(GameObject):
 	def __init__(self,player,Level):
 		self.owner = player
 		self.level = Level
 		
-		super().__init__(self.level.visible_sprites,self.level.bullet_sprites)
-		self.image = pygame.image.load("../graphics/test/BulletProjectile.png").convert_alpha()
-		
-		self.image = pygame.transform.rotate(self.image,-player.angle)
-		self.rect = self.image.get_rect(topleft = player.rect.topleft)
-		self.hitbox = self.rect.inflate(0,0)
+		super().__init__([self.level.visible_sprites, self.level.bullet_sprites], "graphics/test/BulletProjectile.png", player.rect.topleft, (0, 0))
 
 		#movement
 		self.direction = pygame.math.Vector2(1,0).rotate(player.angle)
-		self.speed = 12
+		self.speed = 8
 		self.time_to_live = BULLET_MAX_TIME_TO_LIVE
 
 	def collision_horizontal(self):

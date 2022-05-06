@@ -1,16 +1,14 @@
 from random import randint
 import pygame
+from game_object import GameObject
 from utils import Utils
 from debug import debug
-class NPC(pygame.sprite.Sprite):
+class NPC(GameObject):
 	Amount = 0
 	def __init__(self, pos,Level):
 		NPC.Amount += 1
 		self.level = Level
-		super().__init__(self.level.visible_sprites,self.level.NPC_sprites)
-		self.image = pygame.image.load('../graphics/test/player.png')
-		self.rect = self.image.get_rect(topleft = pos)
-		self.hitbox = self.rect.inflate(0,-26)
+		super().__init__([self.level.visible_sprites, self.level.NPC_sprites], 'graphics/test/player.png', pos, (0, -26))
 		self.step = 0
 		self.max_step = randint(80,120)
 		#movement
