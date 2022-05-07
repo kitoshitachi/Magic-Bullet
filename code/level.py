@@ -22,31 +22,20 @@ class Level:
 		self.player_sprites = pygame.sprite.Group()
 		self.NPC_sprites = pygame.sprite.Group()
 		# sprite setup
-		self.No_sprites = []
-		self.create_map()
+		self.spawn_points = map_parser.create_spawn_points()
 		self.create_player()
 		self.create_NPC()
 		# others
 		self.createNPC_time = 0
-
-
 		map_parser.init_objects(self)
 		# others
 		self.minimap = Minimap((16, 16), self.player)
 
-	def create_map(self):
-		for row_index,row in enumerate(WORLD_MAP):
-			for col_index, col in enumerate(row):
-				x = col_index * TILESIZE
-				y = row_index * TILESIZE
-				if col == ' ':
-					self.No_sprites.append((x,y))
-
 	def create_player(self):
-		self.player = Player(random.choice(self.No_sprites),self)
+		self.player = Player(random.choice(self.spawn_points),self)
 
 	def create_NPC(self):
-		NPC(random.choice(self.No_sprites),self)
+		NPC(random.choice(self.spawn_points),self)
 		self.createNPC_time = pygame.time.get_ticks()
 
 	def cooldown_create_NPC(self):

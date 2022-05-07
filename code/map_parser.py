@@ -55,7 +55,6 @@ class MapParser():
         for chunk in layer["chunks"]:
             w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
             for index, tile_gid in enumerate(tile_ids):
-                ### no tile? no maiden?
                 if tile_gid == 0:
                   continue
 
@@ -170,3 +169,21 @@ class MapParser():
         bottom += 1
 
     return (left * TILESIZE, top * TILESIZE, (right - left + 1) * TILESIZE, (bottom - top + 1) * TILESIZE)
+
+  def create_spawn_points(self):
+    spawn_points = []  
+    for layer in filter(lambda layer: "spawn_area" in layer["name"], self.map_layers):
+      for chunk in layer["chunks"]:
+          w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+          for index, tile_gid in enumerate(tile_ids):
+              ### no tile? no maiden?
+              if tile_gid == 0:
+                continue
+
+              x = index % w
+              y = floor(index / w)
+              spawn_points.append((x * TILESIZE, y * TILESIZE))
+
+    return spawn_points
+  
+
