@@ -51,6 +51,7 @@ class Bullet(GameObject):
 			if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
 				self.stunt_count_down = 500
 				player.stunted()
+				self.kill()
 
 	def update(self):
 		Utils.move(self,self.speed)

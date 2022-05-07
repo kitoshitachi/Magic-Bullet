@@ -39,7 +39,7 @@ class NPC(GameObject):
 					self.hitbox.top = sprite.hitbox.bottom
 
 	def bullet_collision(self):
-		for NPC in pygame.sprite.spritecollide(self,self.level.bullet_sprites,True):
+		for bullet in pygame.sprite.spritecollide(self,self.level.bullet_sprites,True):
 			self.time_to_live -=1
 
 	def see_player(self):
