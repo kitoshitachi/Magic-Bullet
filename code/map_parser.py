@@ -1,7 +1,7 @@
 from collections import namedtuple
 import json
 from math import floor
-from settings import TILESIZE
+from settings import TILESIZE, MINIMAP_TILE_SIZE
 from Obstacle import Obstacle
 from tilesets import Tilesets
 from tile import Tile
@@ -186,4 +186,27 @@ class MapParser():
 
     return spawn_points
   
+  def create_minimap_image(self):
+    image = pygame.Surface((self.map_w * TILESIZE, self.map_h * TILESIZE))
+    minimap_size = (self.map_w * MINIMAP_TILE_SIZE, self.map_h * MINIMAP_TILE_SIZE)
+    final_image = pygame.Surface(minimap_size)
+
+    for ground_layer in filter(lambda layer: "code" not in layer["name"], self.map_layers):
+      for chunk in ground_layer["chunks"]:
+          w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+          for index, tile_gid in enumerate(tile_ids):
+              ### no tile? no maiden?
+              if tile_gid == 0:
+                continue
+
+              x = index % w
+              y = floor(index / w)
+
+              tile_info = self.get_tile_info_from_id(tile_gid, TILESIZE)
+
+              image.blit(tile_info.tile_set, ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE),
+                         (tile_info.x * TILESIZE, tile_info.y * TILESIZE, TILESIZE, TILESIZE))
+
+    pygame.transform.scale(image, minimap_size, final_image)
+    return final_image
 

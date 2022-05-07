@@ -29,7 +29,7 @@ class Level:
 		self.createNPC_time = 0
 		map_parser.init_objects(self)
 		# others
-		self.minimap = Minimap((16, 16), self.player)
+		self.minimap = Minimap((16, 16), self.player, map_parser.create_minimap_image())
 
 	def create_player(self):
 		self.player = Player(random.choice(self.spawn_points),self)
