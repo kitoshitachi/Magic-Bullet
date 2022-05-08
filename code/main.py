@@ -5,8 +5,6 @@ from level import Level
 
 class Game:
 	def __init__(self):
-		  
-		# general setup
 		pygame.init()
 		
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
@@ -17,10 +15,9 @@ class Game:
   
 		pygame.display.set_caption('Magic Bullet')
   
+		self.level = Level('map1')
 		self.clock = pygame.time.Clock()
 
-		self.level = Level('map1')
-	
 	def run(self):
 		while True:
 			for event in pygame.event.get():
@@ -28,11 +25,12 @@ class Game:
 					pygame.quit()
 					sys.exit()
 
+			delta_time = self.clock.tick(FPS) / 1000.0
 			self.screen.fill('black')
-			self.level.run()
+			self.level.run(delta_time)
 
 			pygame.display.update()
-			self.clock.tick(FPS)
+
 
 if __name__ == '__main__':
 	game = Game()

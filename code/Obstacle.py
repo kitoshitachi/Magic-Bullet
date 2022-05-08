@@ -7,7 +7,7 @@ from settings import *
 
 class Obstacle(GameObject):
   def __init__(self, image, area, pos, hitbox, level):
-    super().__init__([level.visible_sprites, level.obstacle_sprites])
+    super().__init__(group=[level.visible_sprites, level.obstacle_sprites])
 
     self.image = image
     self.rect = pygame.Rect(pos[0], pos[1], area[2], area[3])

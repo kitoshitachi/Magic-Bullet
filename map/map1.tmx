@@ -327,7 +327,7 @@
 </chunk>
   </data>
  </layer>
- <layer id="8" name="obstacle_object_small" width="63" height="58" opacity="0.8">
+ <layer id="8" name="obstacle_object_code_small" width="63" height="58" opacity="0.8">
   <data encoding="csv">
    <chunk x="0" y="0" width="63" height="58">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -391,7 +391,7 @@
 </chunk>
   </data>
  </layer>
- <layer id="13" name="obstacle_object_tall" width="63" height="58" opacity="0.66">
+ <layer id="13" name="obstacle_object_code_tall" width="63" height="58" opacity="0.66">
   <data encoding="csv">
    <chunk x="0" y="0" width="63" height="58">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -455,7 +455,7 @@
 </chunk>
   </data>
  </layer>
- <layer id="17" name="obstacle_object_tall2" width="63" height="58" opacity="0.8">
+ <layer id="17" name="obstacle_object_code_tall2" width="63" height="58" opacity="0.8">
   <data encoding="csv">
    <chunk x="0" y="0" width="63" height="58">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -519,10 +519,10 @@
 </chunk>
   </data>
  </layer>
- <layer id="15" name="obstacle_object_large" width="63" height="58">
+ <layer id="15" name="obstacle_object_code_large" width="63" height="58">
   <data encoding="csv"/>
  </layer>
- <layer id="18" name="boundary" width="63" height="58" opacity="0.82">
+ <layer id="18" name="boundary_code" width="63" height="58" opacity="0.82">
   <data encoding="csv">
    <chunk x="0" y="0" width="63" height="58">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,103,0,0,0,0,0,0,0,0,0,0,
@@ -586,7 +586,7 @@
 </chunk>
   </data>
  </layer>
- <layer id="21" name="spawn_area" width="63" height="58" opacity="0.84">
+ <layer id="21" name="spawn_area_code" width="63" height="58" opacity="0.84">
   <data encoding="csv">
    <chunk x="0" y="0" width="63" height="58">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

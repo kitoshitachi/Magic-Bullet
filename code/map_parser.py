@@ -1,6 +1,7 @@
 from collections import namedtuple
 import json
 from math import floor
+from turtle import position
 from settings import TILESIZE, MINIMAP_TILE_SIZE
 from Obstacle import Obstacle
 from tilesets import Tilesets
@@ -113,13 +114,13 @@ class MapParser():
   def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
     x, y = tile_pos
     offset_x, offset_y = tile_offset_pos
-    px, py = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
+    position = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
 
     area = self._get_area(x, y, chunk, check_arr)
     _, _, ow, oh = area
 
-    hitbox = pygame.Rect(px, py + oh - TILESIZE, ow, TILESIZE)
-    Obstacle(self.obstacle_image, area, (px, py), hitbox, level)
+    hitbox = pygame.Rect(position[0], position[1] + oh - TILESIZE, ow, TILESIZE)
+    Obstacle(self.obstacle_image, area, position, hitbox, level)
 
   def _get_area(self, left, top, chunk, check_arr):
     w, h, _, _, tile_ids = self._get_chunk_props(chunk)

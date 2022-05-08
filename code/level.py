@@ -43,9 +43,14 @@ class Level:
 		if NPC.Amount < 10 and current_time - self.createNPC_time >= CREATE_NPC_DURATION:
 			self.create_NPC()
 
-	def run(self):	
+	def run(self, delta_time):	
 		self.cooldown_create_NPC()
-		self.visible_sprites.update()
+		
+		for object in self.visible_sprites:
+			object.before_update(delta_time)
+			object.update(delta_time)
+			object.after_update()
+
 		self.minimap.update()
 		
 		self.visible_sprites.draw(self.player)
@@ -69,8 +74,8 @@ class YSortCameraGroup(pygame.sprite.Group):
 		self.offset.x = target.rect.centerx - self.half_width
 		self.offset.y = target.rect.centery - self.half_height
 
-		self.display_surface.blit(self.level.map_ground_image, - self.offset)
-
+		self.display_surface.blit(self.level.map_ground_image, -self.offset)
+		
 		for sprite in sorted(self.sprites(),key= lambda sprite: sprite.hitbox.centery):
 				sprite.render(self.offset)
 

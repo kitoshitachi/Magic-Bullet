@@ -1,9 +1,4 @@
-
-
-
 import pygame
-
-
 class Tilesets():
   grass_tileset: pygame.Surface = None
   water_tileset : pygame.Surface = None
