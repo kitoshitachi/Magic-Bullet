@@ -15,17 +15,21 @@ class Bullet(GameObject):
       group=[level.visible_sprites, level.bullet_sprites],
       image_path="graphics/test/BulletProjectile.png",
       hitbox_inflation=(-16, -16),
-      pos=player.rect.topleft,
+      pos=player.hitbox.topleft,
       direction=pygame.math.Vector2(1, 0).rotate(player.angle),
       speed=500)
 
     self.time_to_live = BULLET_MAX_TIME_TO_LIVE
+    
+    # đạn nằm ở giữa hitbox người bắn
+    self.rect.center = player.hitbox.center
+    self.hitbox.center = player.hitbox.center
 
   def obstacle_collision(self):
       def response(collison_data):
-          time, _, _, other = collison_data
+          _, normal, _, obstacle = collison_data
 
-          if time == 1 or other is self:
+          if obstacle is self:
             return
 
           self.time_to_live -= 1
@@ -33,6 +37,10 @@ class Bullet(GameObject):
             self.kill()
 
           CollisionResponse.deflect(collison_data)
+          
+          # đảo chiểu của viên đạn còn lại
+          if (isinstance(obstacle, Bullet)):
+            obstacle.direction.reflect_ip(normal * -1)
 
       obstacles_and_bullets = itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites)
       CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
@@ -40,11 +48,16 @@ class Bullet(GameObject):
 
 
   def player_collision(self):
-    for player in pygame.sprite.spritecollide(self,self.level.player_sprites,False):
+    def response(collison_data):
+      player = collison_data.other
       if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
         self.stunt_count_down = 500
         player.stunted()
         self.kill()
+
+    CollisionEngine.detect_multiple(self, self.level.player_sprites, response)
+
+
 
   def update(self, delta_time):
     self.player_collision()

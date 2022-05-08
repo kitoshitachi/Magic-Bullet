@@ -143,6 +143,6 @@ class CollisionResponse:
         remaining_time = 1 - time
         reflected_vel = (who.vel * remaining_time).reflect(normal)
         
-        # CollisionResponse.stop(who, collision_data)
+        CollisionResponse.stop(collision_data)
         who.vel = reflected_vel
 
