@@ -6,6 +6,7 @@ from re import T
 from typing import List
 
 from pygame import Vector2
+from settings import COLLISION_DETECTION_RADIUS
 from utils import Utils
 
 from game_object import GameObject
@@ -20,8 +21,10 @@ class CollisionEngine:
     # Kiểm tra va chạm nhiều object cùng lúc, sắp xếp dựa trên dộ gần với moving_object
     @staticmethod
     def detect_multiple(moving_object: GameObject, others, response = None) -> List[CollisionData]:
-        closest_to_moving_object = lambda obj: Vector2(obj.rect.center).distance_to(Vector2(moving_object.rect.center))
-        return [CollisionEngine.detect(moving_object, sprite, response) for sprite in sorted(others, key=closest_to_moving_object)]
+        closest_to_moving_object = lambda obj: Vector2(obj.hitbox.center).distance_to(Vector2(moving_object.hitbox.center))
+        not_too_far_away = lambda obj: Vector2(obj.hitbox.center).distance_to(Vector2(moving_object.hitbox.center)) < COLLISION_DETECTION_RADIUS
+        targets = sorted(filter(not_too_far_away, others), key=closest_to_moving_object)
+        return [CollisionEngine.detect(moving_object, target, response) for target in targets]
 
     @staticmethod
     def detect(moving_object: GameObject, static_object: GameObject, response = None) -> CollisionData:
