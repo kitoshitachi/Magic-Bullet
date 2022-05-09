@@ -1,2 +1,0 @@
-outside_rule.tmx
-ground_rule.tmx
