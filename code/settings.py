@@ -1,6 +1,7 @@
 # game setup
 FPS      = 60
 TILESIZE = 32
+<<<<<<< HEAD
 WIDTH = 32 * 16 * 2
 HEIGHT = 32 * 9 * 2
 MINIMAP_TILE_SIZE = 4
@@ -31,3 +32,12 @@ WORLD_MAP = [
 [' ',' ',' ',' ',' ',' ',' ',' ',' ','p',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
 [' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '],
 ]
+=======
+SCREEN_WIDTH = 32 * 16 * 2
+SCREEN_HEIGHT = 32 * 9 * 2
+MINIMAP_TILE_SIZE = 2
+BULLET_MAX_TIME_TO_LIVE = 8
+PLAYER_STUNT_DURATION = 500
+CREATE_NPC_DURATION = 1000
+COLLISION_DETECTION_RADIUS = 32 * 3
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d

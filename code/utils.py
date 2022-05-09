@@ -1,4 +1,5 @@
 from math import atan2, degrees
+import math
 import pygame
 
 class Utils:
@@ -23,3 +24,9 @@ class Utils:
 		object.collision_vertical()
 
 		object.rect.center = object.hitbox.center
+
+		import math
+
+	@staticmethod
+	def round_away_from_zero(x):
+		return int(math.floor(x + 0.5) if x > 0 else math.ceil(x - 0.5))

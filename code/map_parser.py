@@ -1,7 +1,12 @@
 from collections import namedtuple
 import json
 from math import floor
+<<<<<<< HEAD
 from settings import TILESIZE
+=======
+from turtle import position
+from settings import TILESIZE, MINIMAP_TILE_SIZE
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
 from Obstacle import Obstacle
 from tilesets import Tilesets
 from tile import Tile
@@ -9,11 +14,16 @@ from wall import Wall
 import pygame
 
 TileInfo = namedtuple("TileInfo", ["tile_set", "tile_id", "x", "y"])
+<<<<<<< HEAD
+=======
+ChunkProps = namedtuple("ChunkProps", ["width", "height", "offset_x", "offset_y", "tile_ids"])
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
 
 class MapParser():
   def __init__(self, map_name):
     self.path = f'map/{map_name}.json'
 
+<<<<<<< HEAD
     self.tilesets = [Tilesets.grass_tileset, Tilesets.chip_tileset, Tilesets.water_tileset]
 
     with open(self.path) as f:
@@ -36,6 +46,27 @@ class MapParser():
           offset_x = chunk["x"]
           offset_y = chunk["y"]
           for index, tile_gid in enumerate(chunk["data"]):
+=======
+    with open(self.path) as f:
+      map_json = json.load(f)
+      self.tileset_firstgids = [ts["firstgid"] for ts in map_json["tilesets"]]
+      self.tilesets = [Tilesets.grass_tileset, Tilesets.chip_tileset, Tilesets.water_tileset]
+      self.map_layers = map_json["layers"] 
+      self.map_w = map_json["width"]
+      self.map_h = map_json["height"]
+      self.obstacle_image = self._create_obstacle_image()
+
+  def _get_chunk_props(self, chunk) -> ChunkProps:
+    return ChunkProps(chunk["width"], chunk["height"], chunk["x"], chunk["y"], chunk["data"])
+
+  def create_map_ground_image(self):
+    image = pygame.Surface((self.map_w * TILESIZE, self.map_h * TILESIZE))
+
+    for ground_layer in filter(lambda layer: "ground" in layer["name"], self.map_layers):
+      for chunk in ground_layer["chunks"]:
+          w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+          for index, tile_gid in enumerate(tile_ids):
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
               ### no tile? no maiden?
               if tile_gid == 0:
                 continue
@@ -43,6 +74,7 @@ class MapParser():
               x = index % w
               y = floor(index / w)
 
+<<<<<<< HEAD
               tile_info = self.get_tile_info_from_id(tile_gid, tile_w)
 
               map_image.blit(tile_info.tile_set, ((x + offset_x) * tile_w, (y + offset_y) * tile_h),
@@ -67,12 +99,29 @@ class MapParser():
             offset_y = chunk["y"]
             for index, tile_gid in enumerate(chunk["data"]):
                 ### no tile? no maiden?
+=======
+              tile_info = self.get_tile_info_from_id(tile_gid, TILESIZE)
+
+              image.blit(tile_info.tile_set, ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE),
+                             (tile_info.x * TILESIZE, tile_info.y * TILESIZE, TILESIZE, TILESIZE))
+    return image
+
+
+  def _create_obstacle_image(self):
+      image = pygame.Surface((self.map_w * TILESIZE, self.map_h * TILESIZE), pygame.SRCALPHA)
+
+      for layer in filter(lambda layer: "obstacle_sprite" in layer["name"], self.map_layers):
+        for chunk in layer["chunks"]:
+            w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+            for index, tile_gid in enumerate(tile_ids):
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
                 if tile_gid == 0:
                   continue
 
                 x = index % w
                 y = floor(index / w)
 
+<<<<<<< HEAD
                 tile_info = self.get_tile_info_from_id(tile_gid, tile_w)
 
                 image.blit(tile_info.tile_set, ((x + offset_x) * tile_w, (y + offset_y) * tile_h),
@@ -88,6 +137,22 @@ class MapParser():
       if tile_gid < tileset_info["firstgid"]:
         tileset = self.tilesets[index - 1]
         id_offset = tilesets_info[index - 1]["firstgid"]
+=======
+                tile_info = self.get_tile_info_from_id(tile_gid, TILESIZE)
+
+                image.blit(tile_info.tile_set, ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE),
+                           (tile_info.x * TILESIZE, tile_info.y * TILESIZE, TILESIZE, TILESIZE))
+      return image
+
+  def get_tile_info_from_id(self, tile_gid, tile_width) -> TileInfo:
+    tileset = self.tilesets[-1]
+    id_offset = self.tileset_firstgids[-1]
+
+    for index, firstgid in enumerate(self.tileset_firstgids[1:], 1):
+      if tile_gid < firstgid:
+        tileset = self.tilesets[index - 1]
+        id_offset = self.tileset_firstgids[index - 1]
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
         break
 
     tileset_cols = floor(tileset.get_width() / tile_width)
@@ -95,6 +160,7 @@ class MapParser():
     return TileInfo(tileset, tile_id, tile_id % tileset_cols, floor(tile_id / tileset_cols))
 
   def init_objects(self, level):
+<<<<<<< HEAD
     for layer in self.map_json['layers']:
       layer_name = layer["name"]
 
@@ -109,6 +175,16 @@ class MapParser():
           offset_y = chunk["y"]
 
           for index, tile_gid in enumerate(chunk["data"]):
+=======
+    for object_layer in filter(lambda layer: "object" in layer["name"], self.map_layers):
+      layer_name = object_layer["name"]
+
+      for chunk in object_layer["chunks"]:
+          w, h, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+          check_arr = [False] * w * h 
+
+          for index, tile_gid in enumerate(tile_ids):
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
             ### no tile? no maiden?
             if tile_gid == 0:
               continue
@@ -119,6 +195,7 @@ class MapParser():
             if "small" in layer_name:
               self._create_obstacle_small((x, y), (offset_x, offset_y), level)
             if "tall" in layer_name and not check_arr[x + y * w]:
+<<<<<<< HEAD
               self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr, tile_gid)
 
       
@@ -128,6 +205,9 @@ class MapParser():
             #   Wall(((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE), level),
             # elif "obstacle" in layer_name:
             #   Tile(tile_info.tile_set, tile_info.tile_id, ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE), level)
+=======
+              self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr)
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
 
   def _create_obstacle_small(self, tile_pos, tile_offset_pos, level):
     x, y = tile_pos
@@ -137,14 +217,22 @@ class MapParser():
     area = (position[0], position[1], TILESIZE, TILESIZE)
     Obstacle(self.obstacle_image, area, position, hitbox, level)
 
+<<<<<<< HEAD
   def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr, tile_gid):
     x, y = tile_pos
     offset_x, offset_y = tile_offset_pos
     px, py = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
+=======
+  def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
+    x, y = tile_pos
+    offset_x, offset_y = tile_offset_pos
+    position = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
 
     area = self._get_area(x, y, chunk, check_arr)
     _, _, ow, oh = area
 
+<<<<<<< HEAD
     hitbox = pygame.Rect(px, py + oh - TILESIZE, ow, TILESIZE)
     Obstacle(self.obstacle_image, area, (px, py), hitbox, level)
 
@@ -154,6 +242,15 @@ class MapParser():
     h = chunk["width"]
 
     current_gid = chunk_arr[left + top * w]
+=======
+    hitbox = pygame.Rect(position[0], position[1] + oh - TILESIZE, ow, TILESIZE)
+    Obstacle(self.obstacle_image, area, position, hitbox, level)
+
+  def _get_area(self, left, top, chunk, check_arr):
+    w, h, _, _, tile_ids = self._get_chunk_props(chunk)
+
+    current_gid = tile_ids[left + top * w]
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
     right = left
     bottom = top
 
@@ -170,14 +267,22 @@ class MapParser():
         found_bottom = True
 
       if not found_right:
+<<<<<<< HEAD
         for gid in chunk_arr[right + top * w : right + bottom * w + 1 : w]:
+=======
+        for gid in tile_ids[right + top * w : right + bottom * w + 1 : w]:
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
           if gid != current_gid:
             right -= 1
             found_right = True
             break
 
       if not found_bottom:
+<<<<<<< HEAD
         for gid in chunk_arr[left + bottom * w : right + bottom * w + 1]:
+=======
+        for gid in tile_ids[left + bottom * w : right + bottom * w + 1]:
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
           if gid != current_gid:
             bottom -= 1
             found_bottom = True
@@ -198,3 +303,47 @@ class MapParser():
         bottom += 1
 
     return (left * TILESIZE, top * TILESIZE, (right - left + 1) * TILESIZE, (bottom - top + 1) * TILESIZE)
+<<<<<<< HEAD
+=======
+
+  def create_spawn_points(self):
+    spawn_points = []  
+    for layer in filter(lambda layer: "spawn_area" in layer["name"], self.map_layers):
+      for chunk in layer["chunks"]:
+          w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+          for index, tile_gid in enumerate(tile_ids):
+              ### no tile? no maiden?
+              if tile_gid == 0:
+                continue
+
+              x = index % w
+              y = floor(index / w)
+              spawn_points.append((x * TILESIZE, y * TILESIZE))
+
+    return spawn_points
+  
+  def create_minimap_image(self):
+    image = pygame.Surface((self.map_w * TILESIZE, self.map_h * TILESIZE))
+    minimap_size = (self.map_w * MINIMAP_TILE_SIZE, self.map_h * MINIMAP_TILE_SIZE)
+    final_image = pygame.Surface(minimap_size)
+
+    for ground_layer in filter(lambda layer: "code" not in layer["name"], self.map_layers):
+      for chunk in ground_layer["chunks"]:
+          w, _, offset_x, offset_y, tile_ids = self._get_chunk_props(chunk)
+          for index, tile_gid in enumerate(tile_ids):
+              ### no tile? no maiden?
+              if tile_gid == 0:
+                continue
+
+              x = index % w
+              y = floor(index / w)
+
+              tile_info = self.get_tile_info_from_id(tile_gid, TILESIZE)
+
+              image.blit(tile_info.tile_set, ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE),
+                         (tile_info.x * TILESIZE, tile_info.y * TILESIZE, TILESIZE, TILESIZE))
+
+    pygame.transform.scale(image, minimap_size, final_image)
+    return final_image
+
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d

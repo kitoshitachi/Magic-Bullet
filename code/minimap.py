@@ -1,25 +1,18 @@
 import pygame
 
-from settings import MINIMAP_TILE_SIZE, TILESIZE, WORLD_MAP
+from settings import MINIMAP_TILE_SIZE, TILESIZE
 
 class Minimap(pygame.sprite.Sprite):
-	def __init__(self, pos, player):
+	def __init__(self, pos, player, minimap_image):
 		super().__init__()
 		self.image = pygame.image.load('graphics/test/rock.png').convert_alpha()
 		self.pos = pos
 		self.player = player
 
-		self.minimap_surface = pygame.Surface((len(WORLD_MAP[0]) * MINIMAP_TILE_SIZE, len(WORLD_MAP) * MINIMAP_TILE_SIZE))
-		self.minimap_surface.fill((0, 0, 0))
-		self.player_surface = pygame.Surface((len(WORLD_MAP[0]) * MINIMAP_TILE_SIZE, len(WORLD_MAP) * MINIMAP_TILE_SIZE), pygame.SRCALPHA)
+		self.minimap_image = minimap_image
+		self.player_surface = pygame.Surface(minimap_image.get_size(), pygame.SRCALPHA)
 		
 		self.display_surface = pygame.display.get_surface()
-
-		for y, row in enumerate(WORLD_MAP):
-			for x, col in enumerate(row):
-				if col == 'x':
-					pygame.draw.rect(self.minimap_surface, (255, 255, 255), pygame.Rect(
-						x * MINIMAP_TILE_SIZE, y * MINIMAP_TILE_SIZE, MINIMAP_TILE_SIZE, MINIMAP_TILE_SIZE))
 
 	def update(self):
 		self.player_surface.fill((0, 0, 0, 0))
@@ -30,5 +23,5 @@ class Minimap(pygame.sprite.Sprite):
 			x * MINIMAP_TILE_SIZE, y * MINIMAP_TILE_SIZE, MINIMAP_TILE_SIZE, MINIMAP_TILE_SIZE))
 
 	def draw(self):
-		self.display_surface.blit(self.minimap_surface, self.pos)
+		self.display_surface.blit(self.minimap_image, self.pos)
 		self.display_surface.blit(self.player_surface, self.pos)

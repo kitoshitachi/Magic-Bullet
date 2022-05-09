@@ -1,11 +1,16 @@
 import itertools
 import pygame
+<<<<<<< HEAD
+=======
+from collision import CollisionEngine, CollisionResponse
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
 from game_object import GameObject
 from utils import Utils
 from settings import BULLET_MAX_TIME_TO_LIVE
 from debug import debug
 
 class Bullet(GameObject):
+<<<<<<< HEAD
 	def __init__(self,player,Level):
 		self.owner = player
 		self.level = Level
@@ -16,47 +21,63 @@ class Bullet(GameObject):
 		self.direction = pygame.math.Vector2(1,0).rotate(player.angle)
 		self.speed = 8
 		self.time_to_live = BULLET_MAX_TIME_TO_LIVE
+=======
+  def __init__(self,player,level):
+    self.owner = player
+    self.level = level
+    
+    super().__init__(
+      group=[level.visible_sprites, level.bullet_sprites],
+      image_path="graphics/test/BulletProjectile.png",
+      hitbox_inflation=(-16, -16),
+      pos=player.hitbox.topleft,
+      direction=pygame.math.Vector2(1, 0).rotate(player.angle),
+      speed=500)
 
-	def collision_horizontal(self):
-		for sprite in itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites):
-			if sprite is self:
-				continue
+    self.time_to_live = BULLET_MAX_TIME_TO_LIVE
+    
+    # đạn nằm ở giữa hitbox người bắn
+    self.rect.center = player.hitbox.center
+    self.hitbox.center = player.hitbox.center
+>>>>>>> 03df69a03265a2e25cdfdb1e5a8f867c9fae577d
 
-			if sprite.hitbox.colliderect(self.hitbox):
-				self.time_to_live -= 1
-				if self.direction.x > 0:  # moving right
-					self.hitbox.right = sprite.hitbox.left
-					self.direction.reflect_ip(pygame.math.Vector2(-1,0))
+  def obstacle_collision(self):
+      def response(collison_data):
+          _, normal, _, obstacle = collison_data
 
-				elif self.direction.x < 0:  # moving left
-					self.hitbox.left = sprite.hitbox.right
-					self.direction.reflect_ip(pygame.math.Vector2(1,0))
+          if obstacle is self:
+            return
 
-	def collision_vertical(self):
-		for sprite in itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites):
-			if sprite is self:
-				continue	
+          self.time_to_live -= 1
+          if self.time_to_live <= 0:
+            self.kill()
 
-			if sprite.hitbox.colliderect(self.hitbox):
-				self.time_to_live -= 1
-				if self.direction.y > 0:  # moving down
-					self.hitbox.bottom = sprite.hitbox.top
-					self.direction.reflect_ip(pygame.math.Vector2(0,1))
-				elif self.direction.y < 0:  # moving up
-					self.hitbox.top = sprite.hitbox.bottom
-					self.direction.reflect_ip(pygame.math.Vector2(0,-1))
+          CollisionResponse.deflect(collison_data)
+          
+          # đảo chiểu của viên đạn còn lại
+          if (isinstance(obstacle, Bullet)):
+            obstacle.direction.reflect_ip(normal * -1)
 
-	def player_collision(self):
-		for player in pygame.sprite.spritecollide(self,self.level.player_sprites,False):
-			if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
-				self.stunt_count_down = 500
-				player.stunted()
-
-	def update(self):
-		Utils.move(self,self.speed)
-		self.player_collision()
-		if self.time_to_live <= 0:
-			self.kill()
+      obstacles_and_bullets = itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites)
+      CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
+      self.direction = self.vel.normalize()
 
 
-		
+  def player_collision(self):
+    def response(collison_data):
+      player = collison_data.other
+      if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
+        self.stunt_count_down = 500
+        player.stunted()
+        self.kill()
+
+    CollisionEngine.detect_multiple(self, self.level.player_sprites, response)
+
+
+
+  def update(self, delta_time):
+    self.player_collision()
+    self.obstacle_collision()
+
+
+    
