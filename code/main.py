@@ -11,8 +11,6 @@ class Game:
 		self.display_surface = pygame.display.get_surface()
 		Tilesets.init()
 
-		pygame.image.load('graphics/pipoya_grass.png').convert_alpha()
-  
 		pygame.display.set_caption('Magic Bullet')
   
 		self.level = Level('map1')

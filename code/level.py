@@ -1,12 +1,10 @@
 import random
 from NPC import NPC
-import json
 import pygame
+from settings import CREATE_NPC_DURATION
 from map_parser import MapParser
-from settings import *
 from minimap import Minimap 
 from player import Player
-from debug import debug
 
 class Level:
 	def __init__(self, map_name):
@@ -24,6 +22,7 @@ class Level:
 		# sprite setup
 		self.spawn_points = map_parser.create_spawn_points()
 		self.create_player()
+
 		self.create_NPC()
 		# others
 		self.createNPC_time = 0

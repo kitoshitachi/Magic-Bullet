@@ -49,7 +49,7 @@ class Bullet(GameObject):
 
   def player_collision(self):
     def response(collison_data):
-      player = collison_data.other
+      player = collison_data[3]
       if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
         self.stunt_count_down = 500
         player.stunted()
