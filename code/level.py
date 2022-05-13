@@ -1,7 +1,7 @@
 import random
 from NPC import NPC
 import pygame
-from settings import CREATE_NPC_DURATION, CYAN
+from settings import CREATE_NPC_DURATION, CYAN, SCREEN_WIDTH, SCREEN_HEIGHT
 from map_parser import MapParser
 from minimap import Minimap 
 from player import Player
@@ -67,16 +67,23 @@ class YSortCameraGroup(pygame.sprite.Group):
     # offset dùng để duy chuyển camera 
     self.offset = pygame.math.Vector2()
     
-    self.half_width = self.display_surface.get_size()[0] // 2
-    self.half_height = self.display_surface.get_size()[1] // 2
+    self.map_width, self.map_height = self.level.map_ground_image.get_size()
+    self.half_width = SCREEN_WIDTH // 2
+    self.half_height = SCREEN_HEIGHT // 2
 
   def draw(self, target):
     keys_press = pygame.key.get_pressed()
     if keys_press[pygame.K_h]:
       self.draw_debug = not self.draw_debug
 
+    
     self.offset.x = target.rect.centerx - self.half_width
     self.offset.y = target.rect.centery - self.half_height
+
+    self.offset.x = max(self.offset.x, 0)
+    self.offset.x = min(self.offset.x, self.map_width - SCREEN_WIDTH) 
+    self.offset.y = max(self.offset.y, 0)
+    self.offset.y = min(self.offset.y, self.map_height - SCREEN_HEIGHT)
 
     self.display_surface.blit(self.level.map_ground_image, -self.offset)
     
