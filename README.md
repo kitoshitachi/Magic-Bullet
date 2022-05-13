@@ -8,7 +8,7 @@
 
 3. Cài các dependency: `pip install -r requirements.txt`
 
-4. Chạy game: bấm `ctrl` + `f5` hoặc chạy file main.py
+4. Chạy game: chạy file main.py `python code/main.py`
 ## Gameplay :
 -	Giết NPC để hồi mana
 -	Npc bị bắn sẽ dí theo người bắn ( đụng phải sẽ làm mất mana của người bắn)
