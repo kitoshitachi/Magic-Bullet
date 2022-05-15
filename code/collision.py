@@ -16,7 +16,12 @@ class CollisionEngine:
     @staticmethod
     def detect_multiple(moving_object: GameObject, others, response = None):
         closest_to_moving_object = lambda obj: Vector2(obj.hitbox.center).distance_to(Vector2(moving_object.hitbox.center))
-        not_too_far_away = lambda obj: Vector2(obj.hitbox.center).distance_to(Vector2(moving_object.hitbox.center)) < COLLISION_DETECTION_RADIUS
+        
+        def not_too_far_away(obj): 
+            close = Vector2(obj.hitbox.center).distance_to(Vector2(moving_object.hitbox.center)) <= COLLISION_DETECTION_RADIUS
+            obj_very_large = obj.hitbox.width > COLLISION_DETECTION_RADIUS or obj.hitbox.height > COLLISION_DETECTION_RADIUS
+            return close or obj_very_large 
+
         targets = sorted(filter(not_too_far_away, others), key=closest_to_moving_object)
         return [CollisionEngine.detect(moving_object, target, response) for target in targets]
 
