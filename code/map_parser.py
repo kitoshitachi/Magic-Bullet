@@ -78,8 +78,9 @@ class MapParser():
       layer_name = object_layer["name"]
 
       for chunk in object_layer["chunks"]:
-        tile_ids,h, w, offset_x, offset_y,  = chunk.values()
-        check_arr = [False] * w * h 
+        tile_ids, h, w, offset_x, offset_y,  = chunk.values()
+        check_arr_tall = [False] * w * h
+        check_arr_small = [False] * w * h
 
         for index, tile_gid in enumerate(tile_ids):
           ### no tile? no maiden?
@@ -89,17 +90,20 @@ class MapParser():
           x = index % w
           y = floor(index / w)
 
-          if "small" in layer_name:
-            self._create_obstacle_small((x, y), (offset_x, offset_y), level)
-          if "tall" in layer_name and not check_arr[x + y * w]:
-            self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr)
+          if "small" in layer_name and not check_arr_small[x + y * w]:
+            self._create_obstacle_small((x, y), (offset_x, offset_y), level, chunk, check_arr_small)
+          if "tall" in layer_name and not check_arr_tall[x + y * w]:
+            self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr_tall)
 
-  def _create_obstacle_small(self, tile_pos, tile_offset_pos, level):
+  def _create_obstacle_small(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
     x, y = tile_pos
     offset_x, offset_y = tile_offset_pos
     position = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
-    hitbox = pygame.Rect(position[0], position[1], TILESIZE, TILESIZE)
-    area = (position[0], position[1], TILESIZE, TILESIZE)
+    
+    area = self._get_area(x, y, chunk, check_arr)
+    _, _, ow, oh = area
+    
+    hitbox = pygame.Rect(position[0], position[1], ow, oh)
     Obstacle(self.obstacle_image, area, position, hitbox, level)
 
   def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
@@ -114,8 +118,7 @@ class MapParser():
     Obstacle(self.obstacle_image, area, position, hitbox, level)
 
   def _get_area(self, left, top, chunk, check_arr):
-    tile_ids,h, w, offset_x, offset_y,  = chunk.values()
-
+    tile_ids, h, w, _, _,  = chunk.values()
 
     current_gid = tile_ids[left + top * w]
     right = left
@@ -125,11 +128,11 @@ class MapParser():
     found_bottom = False
 
     while not found_right or not found_bottom:
-      if right == w:
+      if right == w or tile_ids[right + top * w] != current_gid:
         right -= 1
         found_right = True
 
-      if bottom == h:
+      if bottom == h or tile_ids[left + bottom * w] != current_gid:
         bottom -= 1
         found_bottom = True
 
@@ -203,4 +206,3 @@ class MapParser():
 
     pygame.transform.scale(image, minimap_size, final_image)
     return final_image
-
