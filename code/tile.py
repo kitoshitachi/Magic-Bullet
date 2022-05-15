@@ -6,7 +6,7 @@ from settings import *
 
 class Tile(GameObject):
   def __init__(self, tile_set, tile_id, pos, level):
-    super().__init__(group=[level.visible_sprites])
+    super().__init__(group=[level.group_visible])
 
     self.tileset = tile_set
     self.rect = pygame.Rect(pos[0], pos[1], TILESIZE, TILESIZE)

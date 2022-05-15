@@ -12,16 +12,16 @@ class Player(GameObject):
   def __init__(self, pos, level):		
     super().__init__(
       level=level,
-      group=[level.visible_sprites, level.player_sprites],
+      group=[level.group_visible, level.group_player],
       image_path='graphics/test/player.png',
       hitbox_inflation=(-6, -13),
       pos=pos,
       direction=pygame.math.Vector2(0, 0),
       speed=300)
 
-    self.visible_sprites = level.visible_sprites
-    self.obstacle_sprites = level.obstacle_sprites
-    self.bullet_sprites = level.bullet_sprites
+    self.group_visible = level.group_visible
+    self.group_obstacle = level.group_obstacle
+    self.group_bullet = level.group_bullet
 
     #movement
     self.angle = 0
@@ -63,7 +63,7 @@ class Player(GameObject):
     Bullet(self,self.level)
 
   def handle_collision(self):
-      obstacles_and_boundary = itertools.chain(self.level.obstacle_sprites, self.level.boundary_sprites)
+      obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
       CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
     
   def cooldown(self):
@@ -89,6 +89,6 @@ class Player(GameObject):
     self.handle_collision()
 
     mouse_pos = pygame.math.Vector2(pygame.mouse.get_pos())
-    mouse_pos += self.level.visible_sprites.offset
+    mouse_pos += self.level.group_visible.offset
 
     Utils.face_toward(self,mouse_pos)

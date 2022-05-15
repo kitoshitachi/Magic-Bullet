@@ -11,7 +11,7 @@ class Bullet(GameObject):
     self.owner = player
     super().__init__(
       level=level,
-      group=[level.visible_sprites, level.bullet_sprites],
+      group=[level.group_visible, level.group_bullet],
       image_path="graphics/test/BulletProjectile.png",
       hitbox_inflation=(-16, -16),
       pos=player.hitbox.topleft,
@@ -41,7 +41,7 @@ class Bullet(GameObject):
           if (isinstance(obstacle, Bullet)):
             obstacle.direction.reflect_ip(normal * -1)
 
-      obstacles_and_bullets = itertools.chain(self.level.bullet_sprites, self.level.obstacle_sprites)
+      obstacles_and_bullets = itertools.chain(self.level.group_bullet, self.level.group_obstacle)
       CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
       self.direction = self.vel.normalize()
 
@@ -54,7 +54,7 @@ class Bullet(GameObject):
         player.stunted()
         self.kill()
 
-    CollisionEngine.detect_multiple(self, self.level.player_sprites, response)
+    CollisionEngine.detect_multiple(self, self.level.group_player, response)
 
 
 

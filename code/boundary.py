@@ -7,7 +7,7 @@ from settings import *
 
 class Boundary(GameObject):
   def __init__(self, pos, hitbox, level):
-    super().__init__(level, group=[level.boundary_sprites])
+    super().__init__(level, group=[level.group_boundary])
 
     self.rect = hitbox.copy()
     self.hitbox = hitbox

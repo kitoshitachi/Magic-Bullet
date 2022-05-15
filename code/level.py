@@ -15,12 +15,12 @@ class Level:
     map_parser = MapParser(map_name)
     self.map_ground_image = map_parser.create_map_ground_image()
     self.group_all = pygame.sprite.Group()
-    self.visible_sprites = YSortCameraGroup(self)
-    self.obstacle_sprites = pygame.sprite.Group()
-    self.boundary_sprites = pygame.sprite.Group()
-    self.bullet_sprites = pygame.sprite.Group()
-    self.player_sprites = pygame.sprite.Group()
-    self.NPC_sprites = pygame.sprite.Group()
+    self.group_visible = YSortCameraGroup(self)
+    self.group_obstacle = pygame.sprite.Group()
+    self.group_boundary = pygame.sprite.Group()
+    self.group_bullet = pygame.sprite.Group()
+    self.group_player = pygame.sprite.Group()
+    self.group_NPC = pygame.sprite.Group()
     # sprite setup
     self.spawn_points = map_parser.create_spawn_points()
     self.create_player()
@@ -47,14 +47,14 @@ class Level:
   def run(self, delta_time):
     self.cooldown_create_NPC()
 
-    for object in self.visible_sprites:
+    for object in self.group_visible:
       object.before_update(delta_time)
       object.update(delta_time)
       object.after_update()
 
     self.minimap.update()
     
-    self.visible_sprites.draw(self.player)
+    self.group_visible.draw(self.player)
 
     self.minimap.draw()
 

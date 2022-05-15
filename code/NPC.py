@@ -10,7 +10,7 @@ class NPC(GameObject):
     NPC.Amount += 1
     super().__init__(
       level=level,
-      group=[level.visible_sprites, level.NPC_sprites],
+      group=[level.group_visible, level.group_NPC],
       image_path='graphics/test/player.png',
       hitbox_inflation=(0, -26),
       pos=pos,
@@ -28,10 +28,10 @@ class NPC(GameObject):
     self.player = None
 
   def obstacle_collision(self):
-    CollisionEngine.detect_multiple(self, self.level.obstacle_sprites, CollisionResponse.slide)
+    CollisionEngine.detect_multiple(self, self.level.group_obstacle, CollisionResponse.slide)
     
   def bullet_collision(self):
-    for bullet in pygame.sprite.spritecollide(self,self.level.bullet_sprites,True):
+    for bullet in pygame.sprite.spritecollide(self,self.level.group_bullet,True):
       self.time_to_live -=1
 
   def see_player(self):
