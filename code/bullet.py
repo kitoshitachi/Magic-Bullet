@@ -9,9 +9,8 @@ from debug import debug
 class Bullet(GameObject):
   def __init__(self,player,level):
     self.owner = player
-    self.level = level
-    
     super().__init__(
+      level=level,
       group=[level.visible_sprites, level.bullet_sprites],
       image_path="graphics/test/BulletProjectile.png",
       hitbox_inflation=(-16, -16),

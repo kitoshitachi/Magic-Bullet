@@ -9,6 +9,7 @@ class NPC(GameObject):
   def __init__(self, pos, level):
     NPC.Amount += 1
     super().__init__(
+      level=level,
       group=[level.visible_sprites, level.NPC_sprites],
       image_path='graphics/test/player.png',
       hitbox_inflation=(0, -26),
@@ -16,7 +17,6 @@ class NPC(GameObject):
       direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
       speed=300)
 
-    self.level = level
     self.step = 0
     self.max_step = randint(80,120)
     #movement

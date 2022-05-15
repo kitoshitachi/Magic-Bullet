@@ -1,5 +1,6 @@
 import json
 from math import floor
+from boundary import Boundary
 from settings import TILESIZE, MINIMAP_TILE_SIZE
 from Obstacle import Obstacle
 from tilesets import Tilesets
@@ -81,6 +82,7 @@ class MapParser():
         tile_ids, h, w, offset_x, offset_y,  = chunk.values()
         check_arr_tall = [False] * w * h
         check_arr_small = [False] * w * h
+        check_arr_boundary = [False] * w * h
 
         for index, tile_gid in enumerate(tile_ids):
           ### no tile? no maiden?
@@ -92,30 +94,44 @@ class MapParser():
 
           if "small" in layer_name and not check_arr_small[x + y * w]:
             self._create_obstacle_small((x, y), (offset_x, offset_y), level, chunk, check_arr_small)
-          if "tall" in layer_name and not check_arr_tall[x + y * w]:
+          elif "tall" in layer_name and not check_arr_tall[x + y * w]:
             self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr_tall)
+          elif "boundary" in layer_name and not check_arr_boundary[x + y * w]:
+            self._create_boundary((x, y), (offset_x, offset_y), level, chunk, check_arr_boundary)
+
+
 
   def _create_obstacle_small(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
     x, y = tile_pos
-    offset_x, offset_y = tile_offset_pos
-    position = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
+    pos_x, pos_y = self._calculate_postion(tile_pos, tile_offset_pos)
     
     area = self._get_area(x, y, chunk, check_arr)
     _, _, ow, oh = area
     
-    hitbox = pygame.Rect(position[0], position[1], ow, oh)
-    Obstacle(self.obstacle_image, area, position, hitbox, level)
+    hitbox = pygame.Rect(pos_x, pos_y, ow, oh)
+    Obstacle(self.obstacle_image, area, (pos_x, pos_y), hitbox, level)
 
   def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
     x, y = tile_pos
-    offset_x, offset_y = tile_offset_pos
-    position = ((x + offset_x) * TILESIZE, (y + offset_y) * TILESIZE)
+    pos_x, pos_y = self._calculate_postion(tile_pos, tile_offset_pos)
 
     area = self._get_area(x, y, chunk, check_arr)
     _, _, ow, oh = area
 
-    hitbox = pygame.Rect(position[0], position[1] + oh - TILESIZE, ow, TILESIZE)
-    Obstacle(self.obstacle_image, area, position, hitbox, level)
+    hitbox = pygame.Rect(pos_x, pos_y + oh - TILESIZE, ow, TILESIZE)
+    Obstacle(self.obstacle_image, area, (pos_x, pos_y), hitbox, level)
+
+  def _create_boundary(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
+    x, y = tile_pos
+    pos_x, pos_y = self._calculate_postion(tile_pos, tile_offset_pos)
+
+    _, _, ow, oh = self._get_area(x, y, chunk, check_arr)
+
+    hitbox = pygame.Rect(pos_x, pos_y, ow, oh)
+    Boundary((pos_x, pos_y), hitbox, level)
+
+  def _calculate_postion(self, tile_pos, tile_offset_pos):
+    return ((tile_pos[0] + tile_offset_pos[0]) * TILESIZE, (tile_pos[1] + tile_offset_pos[1]) * TILESIZE)
 
   def _get_area(self, left, top, chunk, check_arr):
     tile_ids, h, w, _, _,  = chunk.values()

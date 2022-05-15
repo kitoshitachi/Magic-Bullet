@@ -2,8 +2,10 @@ from utils import Utils
 import pygame
 
 class GameObject(pygame.sprite.Sprite):
-  def __init__(self, group, image_path=None, hitbox_inflation=(0, 0), pos=(0, 0), direction=pygame.math.Vector2(), speed=0):
+  def __init__(self, level, group, image_path=None, hitbox_inflation=(0, 0), pos=(0, 0), direction=pygame.math.Vector2(), speed=0):
+    group.append(level.group_all)
     super().__init__(group)
+    self.level = level
     self.display_surface = pygame.display.get_surface()
     self.direction = direction
     self.speed = speed

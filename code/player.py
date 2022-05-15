@@ -1,3 +1,4 @@
+import itertools
 import pygame
 from bullet import Bullet
 from collision import CollisionEngine, CollisionResponse
@@ -10,6 +11,7 @@ from math import atan2,degrees
 class Player(GameObject):
   def __init__(self, pos, level):		
     super().__init__(
+      level=level,
       group=[level.visible_sprites, level.player_sprites],
       image_path='graphics/test/player.png',
       hitbox_inflation=(-6, -13),
@@ -17,7 +19,6 @@ class Player(GameObject):
       direction=pygame.math.Vector2(0, 0),
       speed=300)
 
-    self.level = level
     self.visible_sprites = level.visible_sprites
     self.obstacle_sprites = level.obstacle_sprites
     self.bullet_sprites = level.bullet_sprites
@@ -61,8 +62,9 @@ class Player(GameObject):
   def shoot(self):
     Bullet(self,self.level)
 
-  def obstacle_collision(self):
-      CollisionEngine.detect_multiple(self, self.obstacle_sprites, CollisionResponse.slide)
+  def handle_collision(self):
+      obstacles_and_boundary = itertools.chain(self.level.obstacle_sprites, self.level.boundary_sprites)
+      CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
     
   def cooldown(self):
     current_time = pygame.time.get_ticks()
@@ -84,7 +86,7 @@ class Player(GameObject):
       self.prev_stunt_time = pygame.time.get_ticks() 
     
     self.cooldown()
-    self.obstacle_collision()
+    self.handle_collision()
 
     mouse_pos = pygame.math.Vector2(pygame.mouse.get_pos())
     mouse_pos += self.level.visible_sprites.offset

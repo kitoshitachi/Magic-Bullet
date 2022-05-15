@@ -14,8 +14,10 @@ class Level:
     # sprite group setup
     map_parser = MapParser(map_name)
     self.map_ground_image = map_parser.create_map_ground_image()
+    self.group_all = pygame.sprite.Group()
     self.visible_sprites = YSortCameraGroup(self)
     self.obstacle_sprites = pygame.sprite.Group()
+    self.boundary_sprites = pygame.sprite.Group()
     self.bullet_sprites = pygame.sprite.Group()
     self.player_sprites = pygame.sprite.Group()
     self.NPC_sprites = pygame.sprite.Group()
@@ -93,6 +95,6 @@ class YSortCameraGroup(pygame.sprite.Group):
       sprite.render(self.offset)
     
     if self.draw_debug:
-      for sprite in sprites:
+      for sprite in sorted(self.level.group_all.sprites(), key=lambda sprite: sprite.hitbox.centery):
         pygame.draw.rect(self.display_surface, CYAN, sprite.hitbox.move(-self.offset), 1)
 
