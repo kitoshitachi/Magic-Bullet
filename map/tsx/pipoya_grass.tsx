@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset version="1.8" tiledversion="1.8.4" name="pipoya_grass" tilewidth="32" tileheight="32" tilecount="96" columns="16">
- <image source="D:/19521204/python/Magic-Bullet/graphics/pipoya_grass.png" width="512" height="192"/>
+ <image source="../../graphics/pipoya_grass.png" width="512" height="192"/>
  <wangsets>
   <wangset name="grass" type="mixed" tile="22">
    <wangcolor name="grass" color="#ff0000" tile="-1" probability="1"/>
