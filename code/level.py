@@ -21,16 +21,21 @@ class Level:
     self.group_bullet = pygame.sprite.Group()
     self.group_player = pygame.sprite.Group()
     self.group_NPC = pygame.sprite.Group()
+
     # sprite setup
     self.spawn_points = map_parser.create_spawn_points()
     self.create_player()
 
     self.create_NPC()
+    
     # others
     self.createNPC_time = 0
     map_parser.init_objects(self)
     # others
     self.minimap = Minimap((16, 16), self.player, map_parser.create_minimap_image())
+
+    pygame.mixer.music.load("audio/MusMus QUEST - 塔 -.mp3")
+    pygame.mixer.music.play(-1)
 
   def create_player(self):
     self.player = Player(random.choice(self.spawn_points),self)

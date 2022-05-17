@@ -1,5 +1,7 @@
 import itertools
 import pygame
+from settings import TILESIZE
+from smoke_effect import SmokeEffect
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
 from utils import Utils
@@ -7,6 +9,9 @@ from settings import BULLET_MAX_TIME_TO_LIVE
 from debug import debug
 
 class Bullet(GameObject):
+  FIRE_SFX = pygame.mixer.Sound("audio/bullet_fire.wav")
+  FIRE_SFX.set_volume(0.3)
+
   def __init__(self,player,level):
     self.owner = player
     super().__init__(
@@ -24,9 +29,11 @@ class Bullet(GameObject):
     self.rect.center = player.hitbox.center
     self.hitbox.center = player.hitbox.center
 
+    Bullet.FIRE_SFX.play()
+
   def obstacle_collision(self):
       def response(collison_data):
-          _, normal, _, obstacle = collison_data
+          time, normal, _, obstacle = collison_data
 
           if obstacle is self:
             return
@@ -34,6 +41,12 @@ class Bullet(GameObject):
           self.time_to_live -= 1
           if self.time_to_live <= 0:
             self.kill()
+          
+          smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2), 
+                       self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
+          
+
+          SmokeEffect(smoke_pos, self.level)
 
           CollisionResponse.deflect(collison_data)
           

@@ -1,4 +1,7 @@
 # game setup
+import pygame
+
+
 FPS      = 60
 TILESIZE = 32
 SCREEN_WIDTH = 32 * 16 * 2
@@ -10,3 +13,4 @@ CREATE_NPC_DURATION = 1000
 COLLISION_DETECTION_RADIUS = 32 * 3
 
 CYAN = (0, 255, 255)
+

@@ -23,6 +23,10 @@ class Game:
 					pygame.quit()
 					sys.exit()
 
+				if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+					pygame.display.toggle_fullscreen()
+
+
 			delta_time = self.clock.tick(FPS) / 1000.0
 			self.screen.fill('black')
 			self.level.run(delta_time)

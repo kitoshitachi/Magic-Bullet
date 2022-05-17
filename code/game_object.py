@@ -2,7 +2,7 @@ from utils import Utils
 import pygame
 
 class GameObject(pygame.sprite.Sprite):
-  def __init__(self, level, group, image_path=None, hitbox_inflation=(0, 0), pos=(0, 0), direction=pygame.math.Vector2(), speed=0):
+  def __init__(self, level, group, image_path="./graphics/test/player.png", hitbox_inflation=(0, 0), pos=(0, 0), direction=pygame.math.Vector2(), speed=0):
     group.append(level.group_all)
     super().__init__(group)
     self.level = level
@@ -11,12 +11,10 @@ class GameObject(pygame.sprite.Sprite):
     self.speed = speed
     self.vel = direction * 0
 
-    if image_path is None:
-      return
-
     self.image = pygame.image.load(image_path).convert_alpha()
     self.rect = self.image.get_rect(topleft=pos)
     self.hitbox = self.rect.inflate(*hitbox_inflation)
+    
 
   def render(self, offset):
     self.display_surface.blit(self.image, self.rect.topleft - offset)

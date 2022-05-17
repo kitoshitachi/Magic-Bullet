@@ -120,7 +120,7 @@ class CollisionEngine:
 class CollisionResponse:
     @staticmethod
     def stop(collision_data):
-        time, normal, who, _ = collision_data
+        time, _, who, _ = collision_data
         who.vel.x = Utils.round_away_from_zero(who.vel.x * time)
         who.vel.y = Utils.round_away_from_zero(who.vel.y * time)
 
