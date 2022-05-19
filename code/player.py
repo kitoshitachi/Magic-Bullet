@@ -108,14 +108,14 @@ class Player(GameObject):
 			self.stamina += 1 
 
 		self.handle_collision()
+		self.update_animation(delta_time)
 
+	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:
 			self.animation.set_images(Assets.player1.get_idle_sequence_from_angle(self.sprite_angle), reset=False)
 			self.animation.set_animation_speed(1)
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
-			if self.sprite_angle < 0:
-				self.sprite_angle += 360
 			self.animation.set_images(Assets.player1.get_move_sequence_from_angle(self.sprite_angle), reset=False)
 			self.animation.set_animation_speed(8)
 

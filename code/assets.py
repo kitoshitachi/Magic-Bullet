@@ -80,7 +80,7 @@ class Assets():
 			)
 		Assets.frog = MovingImages(
 			*(Assets._create_animation_sprites(frog_img, i, 2, (32, 32)) for i in range(8)),
-			*(Assets._create_animation_sprites(frog_img, i, 2, (32, 32)) for i in range(8, 16))
+			*(Assets._create_animation_sprites(frog_img, i, 1, (32, 32)) for i in range(8, 16))
 		)
 
 	def _create_animation_sprites(src, row, amount, sprite_size) -> pygame.Surface:
