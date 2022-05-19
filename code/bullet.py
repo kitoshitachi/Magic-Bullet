@@ -20,7 +20,7 @@ class Bullet(GameObject):
       image_path="graphics/test/BulletProjectile.png",
       hitbox_inflation=(-16, -16),
       pos=player.hitbox.topleft,
-      direction=pygame.math.Vector2(1, 0).rotate(-player.angle),
+      direction=pygame.math.Vector2(1, 0).rotate(player.angle),
       speed=500)
 
     self.time_to_live = BULLET_MAX_TIME_TO_LIVE
@@ -61,14 +61,18 @@ class Bullet(GameObject):
 
   def player_collision(self):
     def response(collison_data):
-      player = collison_data[3]
+      time, _, _, player = collison_data
       if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
         self.stunt_count_down = 500
         player.stunted()
+
+        smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
+                     self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
+        SmokeEffect(smoke_pos, self.level)
+        
         self.kill()
 
     CollisionEngine.detect_multiple(self, self.level.group_player, response)
-
 
 
   def update(self, delta_time):
