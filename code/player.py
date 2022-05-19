@@ -9,7 +9,6 @@ from utils import Utils
 from settings import *
 from math import atan2,degrees
 
-
 class Player(GameObject):
   def __init__(self, pos, level, key_settings):		
     super().__init__(
@@ -93,7 +92,7 @@ class Player(GameObject):
 
   def rotate(self, delta_time):
     self.angle = (self.angle + self.rot_direction * PLAYER_ROT_SPEED * delta_time) % 360
-    self.image = pygame.transform.rotate(Assets.player_image, self.angle)
+    self.image = pygame.transform.rotate(Assets.player_image, -self.angle)
     self.rect = self.image.get_rect(center = self.rect.center)
 
   def update(self, delta_time):
