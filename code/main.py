@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, pygame_menu
 from assets import Assets
 from settings import *
 from level import Level
@@ -10,7 +10,7 @@ class Game:
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 		self.display_surface = pygame.display.get_surface()
 		Assets.init()
-
+		self.menu = pygame_menu.Menu()
 		pygame.display.set_caption('Magic Bullet')
   
 		self.level = Level('map1')
@@ -25,7 +25,6 @@ class Game:
 
 				if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
 					pygame.display.toggle_fullscreen()
-
 
 			delta_time = self.clock.tick(FPS) / 1000.0
 			self.screen.fill('black')
