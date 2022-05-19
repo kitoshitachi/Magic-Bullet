@@ -21,7 +21,6 @@ class SpriteAnimation():
         self.ended = True
 
     self.target.image = self.images[int(self.current_frame)]
-    self.target.rect = self.target.image.get_rect(center = self.target.hitbox.center)
 
   def get_current_frame(self):
     return int(self.current_frame)
@@ -34,5 +33,6 @@ class SpriteAnimation():
     if reset:
       self.current_frame = 0
 
-
+  def set_animation_speed(self, speed):
+    self.animation_speed = speed
   

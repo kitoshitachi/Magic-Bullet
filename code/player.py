@@ -4,6 +4,7 @@ import pygame
 from bullet import Bullet
 from assets import Assets
 from clock import Countdown
+from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
 from settings import *
@@ -23,14 +24,15 @@ class Player(GameObject):
 		super().__init__(
 			level=level,
 			group=[level.group_visible, level.group_player],
-			image=Assets.player,
-			hitbox_inflation=(-6, -13),
+	  		hitbox_inflation=(-6, -32),
 			pos=pos,
 			direction=pygame.math.Vector2(0, 0),
-			speed=PLAYER_SPEED)
+			speed=PLAYER_SPEED
+		)
+		self.hitbox.center = (self.rect.centerx, self.rect.centery + 14)
 		self.mp = PLAYER_MANA
 		self.stamina = PLAYER_STAMINA
-
+		
 		self.attack_timer = Countdown(ATTACK_COOLDOWN)
 		self.regen_timer = Countdown(REGEN_COOLDOWN)
 		self.stunt_timer = Countdown(STUNT_DURATION)
@@ -43,15 +45,17 @@ class Player(GameObject):
 		#movement
 		self.rot_direction = 0
 		self.angle = 0
+		self.animation = SpriteAnimation(self, Assets.player1.down_idle, 8)
+		self.sprite_angle = 90
 
 	def input(self):
 		ks = self.key_settings
 		keys_press = pygame.key.get_pressed()
 		
 		if keys_press[ks.rotate_right]:
-			self.rot_direction = 1
+				self.rot_direction = 1
 		elif keys_press[ks.rotate_left]:
-			self.rot_direction = -1
+				self.rot_direction = -1
 		else:
 			self.rot_direction = 0
 
@@ -94,11 +98,6 @@ class Player(GameObject):
 		self.stunt_timer.reset()
 		self.direction.x,self.direction.y = 0,0 
 
-	def rotate(self, delta_time):
-		self.angle = (self.angle + self.rot_direction * PLAYER_ROT_SPEED * delta_time) % 360
-		self.image = pygame.transform.rotate(Assets.player, -self.angle)
-		self.rect = self.image.get_rect(center = self.rect.center)
-
 	def update(self, delta_time):
 		if self.stunt_timer.is_done:
 			self.input()	
@@ -107,8 +106,31 @@ class Player(GameObject):
 			self.regen_timer.reset()
 		if self.stamina < PLAYER_STAMINA:
 			self.stamina += 1 
-		self.rotate(delta_time)
+
 		self.handle_collision()
+
+		if self.direction.x == 0 and self.direction.y == 0:
+			self.animation.set_images(Assets.player1.get_idle_sequence_from_angle(self.sprite_angle), reset=False)
+			self.animation.set_animation_speed(1)
+		else:
+			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
+			if self.sprite_angle < 0:
+				self.sprite_angle += 360
+			self.animation.set_images(Assets.player1.get_move_sequence_from_angle(self.sprite_angle), reset=False)
+			self.animation.set_animation_speed(8)
+
+		self.animation.update(delta_time)
+
+@dataclass
+class KeySettings:
+	left: int
+	right: int
+	up: int
+	down: int
+	rotate_left: int
+	rotate_right: int
+	shoot: int
+	run: int
 
 class Player1(Player):
 	def __init__(self, pos, level):
