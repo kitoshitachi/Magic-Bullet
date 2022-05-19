@@ -3,11 +3,10 @@ import itertools
 import pygame
 from bullet import Bullet
 from assets import Assets
+from clock import Countdown
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
-from utils import Utils
 from settings import *
-from math import atan2,degrees
 
 class Player(GameObject):
   def __init__(self, pos, level, key_settings):		
@@ -20,7 +19,8 @@ class Player(GameObject):
       direction=pygame.math.Vector2(0, 0),
       speed=300)
     self.mp = PLAYER_MANA
-
+		self.attack_timer = Countdown(ATTACK_COOLDOWN)
+		self.stunt_timer = Countdown(STUNT_DURATION)
     self.group_visible = level.group_visible
     self.group_obstacle = level.group_obstacle
     self.group_bullet = level.group_bullet
@@ -29,11 +29,6 @@ class Player(GameObject):
     #movement
     self.rot_direction = 0
     self.angle = 0
-    self.attacking = False
-    self.attack_cooldown = 400
-    self.attack_time = None
-    self.stunt_count_down = 0
-    self.prev_stunt_time = 0
 
     #rotate
     self.original_image = self.image
@@ -66,10 +61,10 @@ class Player(GameObject):
     if self.direction.magnitude() != 0:
       self.direction.normalize_ip()
     
-    if keys_press[ks.shoot] and not self.attacking:
-      self.attacking = True 
-      self.attack_time = pygame.time.get_ticks()
+		if self.attack_timer.is_done:    
+			if keys_press[ks.shoot]:
       self.shoot()	
+				self.attack_timer.reset()
 
   def shoot(self):
     Bullet(self,self.level)
@@ -78,17 +73,9 @@ class Player(GameObject):
       obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
       CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
     
-  def cooldown(self):
-    current_time = pygame.time.get_ticks()
-
-    if self.attacking:
-      if current_time - self.attack_time >= self.attack_cooldown:
-        self.attacking = False
-
   def stunted(self):
-    self.prev_stunt_time = pygame.time.get_ticks()
-    self.stunt_count_down = PLAYER_STUNT_DURATION
-    self.direction = pygame.math.Vector2()
+		self.stunt_timer.reset()
+		self.direction.x,self.direction.y = 0,0 
 
   def rotate(self, delta_time):
     self.angle = (self.angle + self.rot_direction * PLAYER_ROT_SPEED * delta_time) % 360
@@ -96,14 +83,10 @@ class Player(GameObject):
     self.rect = self.image.get_rect(center = self.rect.center)
 
   def update(self, delta_time):
-    if (self.stunt_count_down <= 0):
+		if self.stunt_timer.is_done:
       self.input()	
-    else:
-      self.stunt_count_down -= pygame.time.get_ticks() - self.prev_stunt_time
-      self.prev_stunt_time = pygame.time.get_ticks() 
     
     self.rotate(delta_time)
-    self.cooldown()
     self.handle_collision()
 
 @dataclass

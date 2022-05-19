@@ -1,11 +1,11 @@
 import random
+from typing import List
 from NPC import NPC
 import pygame
 from camera import Camera
 from settings import *
 from map_parser import MapParser
-from minimap import Minimap 
-from player import Player1, Player2
+from player import Player, Player1, Player2
 
 class Level:
 	def __init__(self, map_name):
@@ -29,7 +29,7 @@ class Level:
 
 		# sprite setup
 		self.spawn_points = map_parser.create_spawn_points()
-		self.create_player()
+		self.players = self.create_player()
 
 		self.create_NPC()
 		
@@ -43,8 +43,8 @@ class Level:
 		pygame.mixer.music.load("audio/MusMus QUEST - 塔 -.mp3")
 		pygame.mixer.music.play(-1)
 
-	def create_player(self):
-		self.players = [Player1(random.choice(self.spawn_points), self), Player2(random.choice(self.spawn_points), self)]
+	def create_player(self) -> List[Player]:
+		return [Player1(random.choice(self.spawn_points), self), Player2(random.choice(self.spawn_points), self)]
 
 	def create_NPC(self):
 		NPC(random.choice(self.spawn_points),self)
@@ -79,15 +79,22 @@ class Level:
 			self.draw_debug = not self.draw_debug
 
 		if self.draw_debug:
-			for game_obj in sorted(self.group_all.sprites(), key=lambda sprite: sprite.hitbox.centery):
+			for game_obj in self.group_all.sprites():
 				for camera in self.cameras:
 					pygame.draw.rect(camera.surface, CYAN, camera.apply_rect(game_obj.hitbox), 1)
 
-		self.draw_bar(self.camera_left.surface, (self.camera_left.width- BAR_LENGTH)/2,
-									self.camera_left.height - 40, self.players[0].mp / PLAYER_MANA)
+		player_bar = PLAYER_MANA_BAR
+		player_bar.x = (self.camera_left.width - player_bar.width)/2
+		player_bar.y = self.camera_left.height - 40
+		self.draw_bar(self.camera_left.surface, player_bar, self.players[0].mp / PLAYER_MANA)
+		self.draw_bar(self.camera_right.surface, player_bar, self.players[1].mp / PLAYER_MANA)
 
-		self.draw_bar(self.camera_right.surface,(self.camera_right.width- BAR_LENGTH)/2, 
-									self.camera_left.height - 40, self.players[1].mp / PLAYER_MANA)
+		for i in range(2):
+			player_bar = self.cameras[i].apply_rect(self.players[i].rect)
+			player_bar.height = 7
+			pct = self.players[i].stunt_timer.elapsed_time/STUNT_DURATION
+			if pct:
+				self.draw_bar(self.cameras[i].surface,player_bar, pct, GREEN)
 
 		self.display_surface.blit(self.camera_left.surface, (0, 0))
 		self.display_surface.blit(self.camera_right.surface, (SCREEN_WIDTH/2, 0))
@@ -96,20 +103,18 @@ class Level:
 		# self.minimap.draw()
 
 	@staticmethod
-	def draw_bar(surf, x, y, pct):
+	def draw_bar(surf, bar:pygame.Rect , pct, color = CYAN):
 		if pct < 0:
 			pct = 0
-		fill = pct * BAR_LENGTH
-		outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-		fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
-		if pct > 0.6:
-			col = CYAN
-		elif pct > 0.3:
-			col = YELLOW
-		else:
-			col = RED
-		pygame.draw.rect(surf, col, fill_rect)
-		pygame.draw.rect(surf, WHITE, outline_rect, 2)
+		fill_rect = bar.copy()
+		fill_rect.width = pct * bar.width
+		if pct <= 0.3:
+			color = RED
+		elif pct <= 0.6:
+			color = YELLOW
+
+		pygame.draw.rect(surf, color, fill_rect)
+		pygame.draw.rect(surf, WHITE, bar, 1)
 
 		
 
