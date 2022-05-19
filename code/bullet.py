@@ -54,7 +54,7 @@ class Bullet(GameObject):
           # đảo chiểu của viên đạn còn lại
           if (isinstance(obstacle, Bullet)):
             obstacle.direction.reflect_ip(normal * -1)
-
+            obstacle.time_to_live -=1
       obstacles_and_bullets = itertools.chain(self.level.group_bullet, self.level.group_obstacle)
       CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
       self.direction = self.vel.normalize()

@@ -83,11 +83,23 @@ class Level:
 				for camera in self.cameras:
 					pygame.draw.rect(camera.surface, CYAN, camera.apply_rect(game_obj.hitbox), 1)
 
-		player_bar = PLAYER_MANA_BAR
+		player_bar = PLAYER_MANA_BAR.copy()
 		player_bar.x = (self.camera_left.width - player_bar.width)/2
 		player_bar.y = self.camera_left.height - 40
-		self.draw_bar(self.camera_left.surface, player_bar, self.players[0].mp / PLAYER_MANA)
-		self.draw_bar(self.camera_right.surface, player_bar, self.players[1].mp / PLAYER_MANA)
+		self.draw_bar(self.camera_left.surface, player_bar.copy(), self.players[0].mp / PLAYER_MANA)
+		self.draw_bar(self.camera_right.surface, player_bar.copy(), self.players[1].mp / PLAYER_MANA)
+		
+		player_bar.y -= 5
+		player_bar.height = 5
+		pct = self.players[0].attack_timer.elapsed_time/ATTACK_COOLDOWN
+		print(pct)
+		if pct:
+			self.draw_bar(self.camera_left.surface, player_bar.copy(), pct, DARKGREY)
+
+		pct = self.players[1].attack_timer.elapsed_time/ATTACK_COOLDOWN
+		if pct:
+			self.draw_bar(self.camera_right.surface, player_bar.copy(), pct, DARKGREY)
+
 
 		for i in range(2):
 			player_bar = self.cameras[i].apply_rect(self.players[i].rect)
@@ -95,6 +107,8 @@ class Level:
 			pct = self.players[i].stunt_timer.elapsed_time/STUNT_DURATION
 			if pct:
 				self.draw_bar(self.cameras[i].surface,player_bar, pct, GREEN)
+			
+			
 
 		self.display_surface.blit(self.camera_left.surface, (0, 0))
 		self.display_surface.blit(self.camera_right.surface, (SCREEN_WIDTH/2, 0))
