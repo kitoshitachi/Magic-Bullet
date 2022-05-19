@@ -68,7 +68,6 @@ class Player(GameObject):
 
 	def shoot(self):
 		Bullet(self,self.level)
-		print("shot")
 
 	def handle_collision(self):
 			obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)

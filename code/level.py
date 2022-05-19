@@ -92,14 +92,12 @@ class Level:
 		player_bar.y -= 5
 		player_bar.height = 5
 		pct = self.players[0].attack_timer.elapsed_time/ATTACK_COOLDOWN
-		print(pct)
 		if pct:
 			self.draw_bar(self.camera_left.surface, player_bar.copy(), pct, DARKGREY)
 
 		pct = self.players[1].attack_timer.elapsed_time/ATTACK_COOLDOWN
 		if pct:
 			self.draw_bar(self.camera_right.surface, player_bar.copy(), pct, DARKGREY)
-
 
 		for i in range(2):
 			player_bar = self.cameras[i].apply_rect(self.players[i].rect)
@@ -108,8 +106,6 @@ class Level:
 			if pct:
 				self.draw_bar(self.cameras[i].surface,player_bar, pct, GREEN)
 			
-			
-
 		self.display_surface.blit(self.camera_left.surface, (0, 0))
 		self.display_surface.blit(self.camera_right.surface, (SCREEN_WIDTH/2, 0))
 
@@ -129,9 +125,3 @@ class Level:
 
 		pygame.draw.rect(surf, color, fill_rect)
 		pygame.draw.rect(surf, WHITE, bar, 1)
-
-		
-
-		
-
-
