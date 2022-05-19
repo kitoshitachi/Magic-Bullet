@@ -10,7 +10,7 @@ class Game:
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 		self.display_surface = pygame.display.get_surface()
 		Assets.init()
-		self.menu = pygame_menu.Menu()
+		self.menu = pygame_menu.Menu("hello", 100, 100)
 		pygame.display.set_caption('Magic Bullet')
   
 		self.level = Level('map1')
