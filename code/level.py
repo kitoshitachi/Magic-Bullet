@@ -88,8 +88,10 @@ class Level:
 		player_bar.y = self.camera_left.height - 40
 		self.draw_bar(self.camera_left.surface, player_bar.copy(), self.players[0].mp / PLAYER_MANA)
 		self.draw_bar(self.camera_right.surface, player_bar.copy(), self.players[1].mp / PLAYER_MANA)
-		
-		player_bar.y -= 5
+		player_bar.y +=20
+		self.draw_bar(self.camera_left.surface, player_bar.copy(), self.players[0].stamina / PLAYER_STAMINA,ORANGE)
+		self.draw_bar(self.camera_right.surface, player_bar.copy(), self.players[1].stamina / PLAYER_STAMINA,ORANGE)
+		player_bar.y -= 25
 		player_bar.height = 5
 		pct = self.players[0].attack_timer.elapsed_time/ATTACK_COOLDOWN
 		if pct:
@@ -104,7 +106,7 @@ class Level:
 			player_bar.height = 7
 			pct = self.players[i].stunt_timer.elapsed_time/STUNT_DURATION
 			if pct:
-				self.draw_bar(self.cameras[i].surface,player_bar, pct, GREEN)
+				self.draw_bar(self.cameras[i].surface,player_bar.copy(), pct, GREEN)
 			
 		self.display_surface.blit(self.camera_left.surface, (0, 0))
 		self.display_surface.blit(self.camera_right.surface, (SCREEN_WIDTH/2, 0))

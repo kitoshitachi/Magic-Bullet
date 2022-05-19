@@ -29,13 +29,17 @@ class Player(GameObject):
 			direction=pygame.math.Vector2(0, 0),
 			speed=PLAYER_SPEED)
 		self.mp = PLAYER_MANA
+		self.stamina = PLAYER_STAMINA
+		
 		self.attack_timer = Countdown(ATTACK_COOLDOWN)
+		self.regen_timer = Countdown(REGEN_COOLDOWN)
 		self.stunt_timer = Countdown(STUNT_DURATION)
+
 		self.group_visible = level.group_visible
 		self.group_obstacle = level.group_obstacle
 		self.group_bullet = level.group_bullet
+
 		self.key_settings = key_settings
-		self.regen_timer = Countdown(REGEN_COOLDOWN)
 		#movement
 		self.rot_direction = 0
 		self.angle = 0
@@ -58,8 +62,9 @@ class Player(GameObject):
 		else:
 			self.direction.y = 0
 
-		if keys_press[ks.run]:
-			self.speed = PLAYER_SPEED*1.3
+		if keys_press[ks.run] and self.stamina >= 60:
+			self.speed = PLAYER_SPEED * 1.6
+			self.stamina -= 60
 		else:
 			self.speed = PLAYER_SPEED
 
@@ -100,6 +105,8 @@ class Player(GameObject):
 		if self.regen_timer.is_done and self.mp < PLAYER_MANA:
 			self.mp += 2
 			self.regen_timer.reset()
+		if self.stamina < PLAYER_STAMINA:
+			self.stamina += 1 
 		self.rotate(delta_time)
 		self.handle_collision()
 
