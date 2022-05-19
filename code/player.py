@@ -30,7 +30,7 @@ class Player(GameObject):
 			speed=PLAYER_SPEED)
 		self.mp = PLAYER_MANA
 		self.stamina = PLAYER_STAMINA
-		
+
 		self.attack_timer = Countdown(ATTACK_COOLDOWN)
 		self.regen_timer = Countdown(REGEN_COOLDOWN)
 		self.stunt_timer = Countdown(STUNT_DURATION)
@@ -49,9 +49,9 @@ class Player(GameObject):
 		keys_press = pygame.key.get_pressed()
 		
 		if keys_press[ks.rotate_right]:
-				self.rot_direction = 1
+			self.rot_direction = 1
 		elif keys_press[ks.rotate_left]:
-				self.rot_direction = -1
+			self.rot_direction = -1
 		else:
 			self.rot_direction = 0
 
