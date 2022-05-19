@@ -58,9 +58,6 @@ class Level:
 	def run(self, delta_time):
 		self.cooldown_create_NPC()
 
-		for camera in self.cameras:
-			camera.surface.blit(self.map_ground_image, camera.apply_rect(self.map_ground_image.get_rect()))
-
 		game_objs = sorted(self.group_visible.sprites(), key=lambda sprite: sprite.hitbox.centery)
 		for game_obj in game_objs:
 			game_obj.before_update(delta_time)
@@ -70,6 +67,9 @@ class Level:
 		self.camera_left.update(self.players[0])
 		self.camera_right.update(self.players[1])
 			
+    for camera in self.cameras:
+      camera.surface.blit(self.map_ground_image, camera.apply_rect(self.map_ground_image.get_rect()))
+
 		for game_obj in game_objs:
 			for camera in self.cameras:
 				game_obj.render(camera)

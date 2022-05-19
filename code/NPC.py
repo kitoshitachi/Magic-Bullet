@@ -1,5 +1,8 @@
+import itertools
 from random import randint
 import pygame
+from assets import Assets
+from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
 from utils import Utils
@@ -17,6 +20,7 @@ class NPC(GameObject):
       direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
       speed=300)
 
+    self.animation = SpriteAnimation(self, Assets.frog_moving_sprites.down, 4)
     self.step = 0
     self.max_step = randint(80,120)
     #movement
@@ -25,10 +29,12 @@ class NPC(GameObject):
     self.time_to_live = randint(1,4)
     self.original_image = self.image
 
+    self.angle = pygame.Vector2()
     self.player = None
 
   def obstacle_collision(self):
-    CollisionEngine.detect_multiple(self, self.level.group_obstacle, CollisionResponse.slide)
+    obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
+    CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
 
   def see_player(self):
     return False
@@ -40,18 +46,21 @@ class NPC(GameObject):
     if self.step >= self.max_step:
       self.step = 0
       self.max_step = randint(40,60)
-      self.direction.x = randint(-1,1)
-      self.direction.y = randint(-1,1)
-    
-    angle = self.direction.angle_to(self.default)
-    self.image = pygame.transform.rotate(self.original_image,angle)
-    
+
+      if randint(0, 3) == 0:
+        return
+
+      self.angle = randint(0, 360)
+      self.direction = pygame.math.Vector2(1, 0).rotate(self.angle)
+      self.animation.set_images(Assets.frog_moving_sprites.get_images_from_angle(self.angle))
 
   def update(self, delta_time):
     if self.see_player() == True:
       Utils.face_toward(self,self.player.rect.center)
     else:
       self.randomMove()
+    
+    self.animation.update(delta_time)
       
     self.obstacle_collision()
     self.step += 1
