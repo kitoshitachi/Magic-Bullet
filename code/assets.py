@@ -59,6 +59,8 @@ class MovingImages:
 
 
 class Assets():
+	font: pygame.font.Font = None
+	font_large: pygame.font.Font = None
 	grass_tileset: pygame.Surface = None
 	water_tileset : pygame.Surface = None
 	chip_tileset: pygame.Surface = None
@@ -69,6 +71,9 @@ class Assets():
 	frog: MovingImages = None
 
 	def init():
+		Assets.font = pygame.font.Font("graphics/font/FVF Fernando 08.ttf", 24)
+		Assets.font_large = pygame.font.Font("graphics/font/FVF Fernando 08.ttf", 48)
+
 		Assets.grass_tileset = pygame.image.load('graphics/pipoya_grass.png').convert_alpha()
 		Assets.water_tileset = pygame.image.load('graphics/pipoya_water.png').convert_alpha()
 		Assets.chip_tileset = pygame.image.load('graphics/pipoya_chip.png').convert_alpha()
