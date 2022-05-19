@@ -3,6 +3,7 @@ from typing import List
 from NPC import NPC
 import pygame
 from camera import Camera
+from debug import get_debug_surface
 from settings import *
 from map_parser import MapParser
 from player import Player, Player1, Player2
@@ -64,6 +65,7 @@ class Level:
 			game_obj.update(delta_time)
 			game_obj.after_update()
 
+
 		self.camera_left.update(self.players[0])
 		self.camera_right.update(self.players[1])
 			
@@ -75,6 +77,11 @@ class Level:
 				game_obj.render(camera)
 
 		keys_press = pygame.key.get_pressed()
+
+		if keys_press[pygame.K_2]:
+			for player in self.players:
+				player.mp = PLAYER_MANA
+
 		if keys_press[pygame.K_1]:
 			self.draw_debug = not self.draw_debug
 

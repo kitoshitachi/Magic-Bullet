@@ -47,6 +47,10 @@ class Player(GameObject):
 		self.angle = 0
 		self.animation = SpriteAnimation(self, Assets.player1.down_idle, 8)
 		self.sprite_angle = 90
+		self.circle_rect = Assets.circle.get_rect(center=self.rect.center)
+		self.arrow_img = Assets.arrow
+		self.arrow_rect = Assets.arrow.get_rect(center=self.rect.center)
+		self.arrow_push_vector = pygame.math.Vector2(self.circle_rect.width // 2, 0)
 
 	def input(self):
 		ks = self.key_settings
@@ -96,7 +100,8 @@ class Player(GameObject):
 	
 	def stunted(self):
 		self.stunt_timer.reset()
-		self.direction.x,self.direction.y = 0,0 
+		self.direction.x, self.direction.y = 0, 0
+		self.rot_direction = 0
 
 	def update(self, delta_time):
 		if self.stunt_timer.is_done:
@@ -108,18 +113,39 @@ class Player(GameObject):
 			self.stamina += 1 
 
 		self.handle_collision()
+		self.update_rotation(delta_time)
 		self.update_animation(delta_time)
 
 	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:
-			self.animation.set_images(Assets.player1.get_idle_sequence_from_angle(self.sprite_angle), reset=False)
+			self.animation.set_images(Assets.player1.get_idle_sequence_from_angle(self.angle), reset=False)
 			self.animation.set_animation_speed(1)
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
-			self.animation.set_images(Assets.player1.get_move_sequence_from_angle(self.sprite_angle), reset=False)
+			self.animation.set_images(Assets.player1.get_move_sequence_from_angle(self.angle), reset=False)
 			self.animation.set_animation_speed(8)
 
 		self.animation.update(delta_time)
+
+	def update_rotation(self, delta_time):
+		self.angle = (self.angle + self.rot_direction * PLAYER_ROT_SPEED * delta_time) % 360
+
+	def after_update(self):
+		super().after_update()
+		self.circle_rect.center = self.rect.center
+
+		self.arrow_push_vector = pygame.Vector2(self.circle_rect.width // 2, 0).rotate(self.angle)
+		self.arrow_img = pygame.transform.rotate(Assets.arrow, -self.angle)
+
+		self.arrow_rect.center = self.rect.center
+		self.arrow_rect.x += self.arrow_push_vector.x
+		self.arrow_rect.y += self.arrow_push_vector.y
+
+
+	def render(self, camera):
+		super().render(camera)
+		camera.surface.blit(Assets.circle, camera.apply_rect(self.circle_rect))
+		camera.surface.blit(self.arrow_img, camera.apply_rect(self.arrow_rect))
 
 @dataclass
 class KeySettings:

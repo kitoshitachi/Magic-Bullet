@@ -28,7 +28,8 @@ class CollisionEngine:
     @staticmethod
     def detect(moving_object: GameObject, static_object: GameObject, response = None):
         '''return time, normal, who, other'''
-        bbox = CollisionEngine._get_swept_broadphase_box(moving_object)
+
+        bbox = CollisionEngine._get_swept_broadphase_box(moving_object, static_object)
         if CollisionEngine._AABB_check(bbox, static_object.hitbox.copy()):
             data = CollisionEngine._swept_AABB(moving_object, static_object)
         else:
@@ -40,13 +41,13 @@ class CollisionEngine:
         return data
 
     @staticmethod
-    def _get_swept_broadphase_box(object:GameObject):
+    def _get_swept_broadphase_box(m_object:GameObject, s_object:GameObject):
         r = Utils.round_away_from_zero
         new_Box = Rect(0,0,0,0)
-        new_Box.left = r(object.hitbox.left if object.vel.x > 0 else object.hitbox.left + object.vel.x)
-        new_Box.top = r(object.hitbox.top if object.vel.y > 0 else object.hitbox.top + object.vel.y)
-        new_Box.width = r(object.hitbox.width + abs(object.vel.x))
-        new_Box.height = r(object.hitbox.height + abs(object.vel.y)) 
+        new_Box.left = r(m_object.hitbox.left if m_object.vel.x >0 else m_object.hitbox.left + m_object.vel.x - s_object.vel.x)
+        new_Box.top = r(m_object.hitbox.top if m_object.vel.y > 0 else m_object.hitbox.top + m_object.vel.y - s_object.vel.y)
+        new_Box.width = r(m_object.hitbox.width + abs(m_object.vel.x))
+        new_Box.height = r(m_object.hitbox.height + abs(m_object.vel.y)) 
         return new_Box.copy()
 
     @staticmethod
@@ -59,7 +60,7 @@ class CollisionEngine:
     @staticmethod
     def _swept_AABB(moving_object:GameObject, static_object:GameObject):
         '''return time, normal, who, other'''
-        cur_mb_vel = moving_object.vel.copy()
+        cur_mb_vel = moving_object.vel - static_object.vel
         sb = static_object.hitbox.copy()
         mb = moving_object.hitbox.copy()
         # find the distance between the objects on the near and far sides

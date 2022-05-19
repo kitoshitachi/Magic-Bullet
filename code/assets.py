@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from typing import List
 import pygame
 
+from settings import TILESIZE, WHITE
+
 @dataclass
 class MovingImages:
 		up_move: List[pygame.Surface]
@@ -60,6 +62,9 @@ class Assets():
 	grass_tileset: pygame.Surface = None
 	water_tileset : pygame.Surface = None
 	chip_tileset: pygame.Surface = None
+	arrow: pygame.Surface = None
+	circle: pygame.Surface = None
+	smoke_effect: pygame.Surface = None
 	player1: MovingImages = None
 	frog: MovingImages = None
 
@@ -68,6 +73,9 @@ class Assets():
 		Assets.water_tileset = pygame.image.load('graphics/pipoya_water.png').convert_alpha()
 		Assets.chip_tileset = pygame.image.load('graphics/pipoya_chip.png').convert_alpha()
 		Assets.bullet = pygame.image.load('graphics/test/BulletProjectile.png').convert_alpha()
+		Assets.arrow = pygame.image.load('graphics/arrow.png').convert_alpha()
+		Assets.circle = Assets.create_circle_image()
+		Assets.smoke_effect = [pygame.image.load(f"./graphics/smoke_effect/{i}.png").convert_alpha() for i in range(7)]
 		frog_img = pygame.image.load('graphics/NPC/frog.png').convert_alpha()
 		player1_img = pygame.image.load('graphics/player1.png').convert_alpha()
 
@@ -92,4 +100,9 @@ class Assets():
 
 		return sprites
 
-
+	def create_circle_image():
+		radius = 32
+		width = 1
+		surface = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+		pygame.draw.circle(surface, WHITE, (radius, radius), radius - width, width)
+		return surface

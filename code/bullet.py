@@ -45,7 +45,6 @@ class Bullet(GameObject):
 			
 			smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2), 
 						self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
-			
 
 			SmokeEffect(smoke_pos, self.level)
 
@@ -53,9 +52,15 @@ class Bullet(GameObject):
 			
 			# đảo chiểu của viên đạn còn lại
 			if (isinstance(obstacle, Bullet)):
-				obstacle.direction.reflect_ip(normal * -1)
-				obstacle.time_to_live -=1
-				
+				other_bullet: Bullet = obstacle
+				other_bullet.direction.reflect_ip(normal * -1)
+				other_bullet.time_to_live -= 1
+
+				for bullet in [self, other_bullet]:
+					if bullet.hitbox.colliderect(self.owner.hitbox):
+						self.owner.stunted()
+						bullet.kill()
+
 		obstacles_and_bullets = itertools.chain(self.level.group_bullet, self.level.group_obstacle)
 		CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
 		self.direction = self.vel.normalize()
@@ -64,8 +69,7 @@ class Bullet(GameObject):
 		def response(collison_data):
 			time, _, _, player = collison_data
 
-			if player is self.owner and self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
-				self.stunt_count_down = 500
+			if player is self.owner:
 				player.stunted()
 			else:
 				player.kill()
