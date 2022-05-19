@@ -85,6 +85,7 @@ class Bullet(GameObject):
       SmokeEffect(smoke_pos, self.level)
 
       npc.hit()
+      self.kill()
 
     CollisionEngine.detect_multiple(self, self.level.group_NPC, response)
 

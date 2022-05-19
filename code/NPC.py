@@ -15,7 +15,7 @@ class NPC(GameObject):
       level=level,
       group=[level.group_visible, level.group_NPC],
       image=Assets.frog.up[0],
-      hitbox_inflation=(0, -26),
+      hitbox_inflation=(-8, -8),
       pos=pos,
       direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
       speed=300)
