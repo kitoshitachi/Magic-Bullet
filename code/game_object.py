@@ -26,7 +26,7 @@ class GameObject(pygame.sprite.Sprite):
 		self.vel = self.direction * (self.speed * delta_time)
 
 	def update(self, delta_time):
-			pass
+		pass
 
 	def after_update(self):
 		vel_x, vel_y = Utils.round_away_from_zero(self.vel.x), Utils.round_away_from_zero(self.vel.y)
