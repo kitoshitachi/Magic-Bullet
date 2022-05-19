@@ -6,7 +6,6 @@ class GameObject(pygame.sprite.Sprite):
     group.append(level.group_all)
     super().__init__(group)
     self.level = level
-    self.display_surface = pygame.display.get_surface()
     self.direction = direction
     self.speed = speed
     self.vel = direction * 0
@@ -16,8 +15,8 @@ class GameObject(pygame.sprite.Sprite):
     self.hitbox = self.rect.inflate(*hitbox_inflation)
     
 
-  def render(self, offset):
-    self.display_surface.blit(self.image, self.rect.topleft - offset)
+  def render(self, camera):
+    camera.surface.blit(self.image, camera.apply(self))
 
   def before_update(self, delta_time):
     self.vel = self.direction * (self.speed * delta_time)

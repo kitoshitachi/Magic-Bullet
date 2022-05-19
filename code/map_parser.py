@@ -3,7 +3,7 @@ from math import floor
 from boundary import Boundary
 from settings import TILESIZE, MINIMAP_TILE_SIZE
 from Obstacle import Obstacle
-from tilesets import Tilesets
+from assets import Assets
 import pygame
 
 class MapParser():
@@ -13,7 +13,7 @@ class MapParser():
     with open(self.path) as f:
       map_json = json.load(f)
       self.tileset_firstgids = [ts["firstgid"] for ts in map_json["tilesets"]]
-      self.tilesets = [Tilesets.grass_tileset, Tilesets.chip_tileset, Tilesets.water_tileset]
+      self.tilesets = [Assets.grass_tileset, Assets.chip_tileset, Assets.water_tileset]
       self.map_layers = map_json["layers"] 
       self.map_w = map_json["width"]
       self.map_h = map_json["height"]

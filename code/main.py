@@ -1,5 +1,5 @@
 import pygame, sys
-from tilesets import Tilesets
+from assets import Assets
 from settings import *
 from level import Level
 
@@ -9,7 +9,7 @@ class Game:
 		
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 		self.display_surface = pygame.display.get_surface()
-		Tilesets.init()
+		Assets.init()
 
 		pygame.display.set_caption('Magic Bullet')
   

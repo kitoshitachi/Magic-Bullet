@@ -20,7 +20,7 @@ class Bullet(GameObject):
       image_path="graphics/test/BulletProjectile.png",
       hitbox_inflation=(-16, -16),
       pos=player.hitbox.topleft,
-      direction=pygame.math.Vector2(1, 0).rotate(player.angle),
+      direction=pygame.math.Vector2(1, 0).rotate(-player.angle),
       speed=500)
 
     self.time_to_live = BULLET_MAX_TIME_TO_LIVE

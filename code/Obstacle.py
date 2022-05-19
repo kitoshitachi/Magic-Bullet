@@ -1,6 +1,6 @@
 from math import floor
 import pygame
-from tilesets import Tilesets
+from assets import Assets
 from game_object import GameObject
 from settings import *
 
@@ -14,5 +14,5 @@ class Obstacle(GameObject):
     self.hitbox = hitbox
     self.area = area
 
-  def render(self, offset):
-    self.display_surface.blit(self.image, self.rect.topleft - offset, self.area)
+  def render(self, camera):
+    camera.surface.blit(self.image, camera.apply(self), self.area)

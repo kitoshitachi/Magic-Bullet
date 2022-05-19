@@ -1,6 +1,6 @@
 from math import floor
 import pygame
-from tilesets import Tilesets
+from assets import Assets
 from game_object import GameObject
 from settings import *
 
