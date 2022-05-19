@@ -29,13 +29,12 @@ class NPC(GameObject):
 
   def obstacle_collision(self):
     CollisionEngine.detect_multiple(self, self.level.group_obstacle, CollisionResponse.slide)
-    
-  def bullet_collision(self):
-    for bullet in pygame.sprite.spritecollide(self,self.level.group_bullet,True):
-      self.time_to_live -=1
 
   def see_player(self):
     return False
+
+  def hit(self):
+    self.time_to_live -= 1
 
   def randomMove(self):
     if self.step >= self.max_step:
@@ -56,7 +55,6 @@ class NPC(GameObject):
       
     self.obstacle_collision()
     self.step += 1
-    self.bullet_collision()
     if self.time_to_live <= 0:
       self.kill()
 

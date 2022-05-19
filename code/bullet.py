@@ -58,26 +58,39 @@ class Bullet(GameObject):
       CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
       self.direction = self.vel.normalize()
 
-
   def player_collision(self):
     def response(collison_data):
       time, _, _, player = collison_data
-      if player is not self.owner or self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
+
+      if player is self.owner and self.time_to_live != BULLET_MAX_TIME_TO_LIVE:
         self.stunt_count_down = 500
         player.stunted()
+      else:
+        player.kill()
 
-        smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
-                     self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
-        SmokeEffect(smoke_pos, self.level)
-        
-        self.kill()
+      smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
+                   self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
+      SmokeEffect(smoke_pos, self.level)
+
+      self.kill()
 
     CollisionEngine.detect_multiple(self, self.level.group_player, response)
 
+  def npc_collision(self):
+    def response(collison_data):
+      time, _, _, npc = collison_data
+      smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
+                    self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
+      SmokeEffect(smoke_pos, self.level)
+
+      npc.hit()
+
+    CollisionEngine.detect_multiple(self, self.level.group_NPC, response)
 
   def update(self, delta_time):
     self.player_collision()
     self.obstacle_collision()
+    self.npc_collision()
 
 
     
