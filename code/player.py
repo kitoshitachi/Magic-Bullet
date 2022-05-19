@@ -14,7 +14,7 @@ class Player(GameObject):
     super().__init__(
       level=level,
       group=[level.group_visible, level.group_player],
-      image_path='graphics/test/player.png',
+      image=Assets.player,
       hitbox_inflation=(-6, -13),
       pos=pos,
       direction=pygame.math.Vector2(0, 0),
@@ -92,7 +92,7 @@ class Player(GameObject):
 
   def rotate(self, delta_time):
     self.angle = (self.angle + self.rot_direction * PLAYER_ROT_SPEED * delta_time) % 360
-    self.image = pygame.transform.rotate(Assets.player_image, -self.angle)
+    self.image = pygame.transform.rotate(Assets.player, -self.angle)
     self.rect = self.image.get_rect(center = self.rect.center)
 
   def update(self, delta_time):

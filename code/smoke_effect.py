@@ -9,7 +9,7 @@ class SmokeEffect(GameObject):
   FIRE_SFX.set_volume(0.4)
 
   def __init__(self, pos, level):
-      super().__init__(level, [level.group_visible], "./graphics/smoke_effect/0.png", pos=pos)
+      super().__init__(level, [level.group_visible], pos=pos)
       self.animation = SpriteAnimation(self, [
         pygame.image.load(f"./graphics/smoke_effect/{i}.png").convert_alpha() for i in range(7)
       ], loop=False)

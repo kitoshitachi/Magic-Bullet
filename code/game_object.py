@@ -1,8 +1,12 @@
+from assets import Assets
 from utils import Utils 
 import pygame
 
 class GameObject(pygame.sprite.Sprite):
-  def __init__(self, level, group, image_path="./graphics/test/player.png", hitbox_inflation=(0, 0), pos=(0, 0), direction=pygame.math.Vector2(), speed=0):
+  def __init__(self, level, group, image=None, hitbox_inflation=(0, 0), pos=(0, 0), direction=pygame.math.Vector2(), speed=0):
+    if image is None:
+      image = Assets.player
+    
     group.append(level.group_all)
     super().__init__(group)
     self.level = level
@@ -10,7 +14,7 @@ class GameObject(pygame.sprite.Sprite):
     self.speed = speed
     self.vel = direction * 0
 
-    self.image = pygame.image.load(image_path).convert_alpha()
+    self.image = image
     self.rect = self.image.get_rect(topleft=pos)
     self.hitbox = self.rect.inflate(*hitbox_inflation)
     

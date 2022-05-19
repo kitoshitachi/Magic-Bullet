@@ -14,13 +14,13 @@ class NPC(GameObject):
     super().__init__(
       level=level,
       group=[level.group_visible, level.group_NPC],
-      image_path='graphics/test/player.png',
+      image=Assets.frog.up[0],
       hitbox_inflation=(0, -26),
       pos=pos,
       direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
       speed=300)
 
-    self.animation = SpriteAnimation(self, Assets.frog_moving_sprites.down, 4)
+    self.animation = SpriteAnimation(self, Assets.frog.down, 4)
     self.step = 0
     self.max_step = randint(80,120)
     #movement
@@ -52,7 +52,7 @@ class NPC(GameObject):
 
       self.angle = randint(0, 360)
       self.direction = pygame.math.Vector2(1, 0).rotate(self.angle)
-      self.animation.set_images(Assets.frog_moving_sprites.get_images_from_angle(self.angle))
+      self.animation.set_images(Assets.frog.get_images_from_angle(self.angle))
 
   def update(self, delta_time):
     if self.see_player() == True:

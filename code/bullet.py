@@ -1,5 +1,6 @@
 import itertools
 import pygame
+from assets import Assets
 from settings import TILESIZE
 from smoke_effect import SmokeEffect
 from collision import CollisionEngine, CollisionResponse
@@ -17,7 +18,7 @@ class Bullet(GameObject):
     super().__init__(
       level=level,
       group=[level.group_visible, level.group_bullet],
-      image_path="graphics/test/BulletProjectile.png",
+      image=Assets.bullet,
       hitbox_inflation=(-16, -16),
       pos=player.hitbox.topleft,
       direction=pygame.math.Vector2(1, 0).rotate(player.angle),

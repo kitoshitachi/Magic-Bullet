@@ -38,17 +38,18 @@ class Assets():
   grass_tileset: pygame.Surface = None
   water_tileset : pygame.Surface = None
   chip_tileset: pygame.Surface = None
-  player_image: pygame.Surface = None
-  frog_moving_sprites: MovingImages = None
+  player: pygame.Surface = None
+  frog: MovingImages = None
 
   def init():
     Assets.grass_tileset = pygame.image.load('graphics/pipoya_grass.png').convert_alpha()
     Assets.water_tileset = pygame.image.load('graphics/pipoya_water.png').convert_alpha()
     Assets.chip_tileset = pygame.image.load('graphics/pipoya_chip.png').convert_alpha()
-    Assets.player_image = pygame.image.load('graphics/test/player.png').convert_alpha()
+    Assets.player = pygame.image.load('graphics/test/player.png').convert_alpha()
+    Assets.bullet = pygame.image.load('graphics/test/BulletProjectile.png').convert_alpha()
     frog_img = pygame.image.load('graphics/NPC/frog.png').convert_alpha()
     
-    Assets.frog_moving_sprites = MovingImages(
+    Assets.frog = MovingImages(
         *(Assets._create_animation_sprites(frog_img, i, 2, (32, 32)) for i in range(8))
     )
 
