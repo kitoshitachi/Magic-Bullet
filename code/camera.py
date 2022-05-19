@@ -5,6 +5,7 @@ class Camera:
         self.surface = pygame.Surface(screen_size)
         self.camera = pygame.Rect(0, 0, *map_size)
         self.map_size = map_size
+        self.width,self.height = screen_size
 
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)

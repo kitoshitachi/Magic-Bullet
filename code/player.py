@@ -20,6 +20,7 @@ class Player(GameObject):
       pos=pos,
       direction=pygame.math.Vector2(0, 0),
       speed=300)
+    self.mp = PLAYER_MANA
 
     self.group_visible = level.group_visible
     self.group_obstacle = level.group_obstacle
