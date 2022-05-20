@@ -4,6 +4,7 @@ import pygame
 from bullet import Bullet
 from assets import Assets
 from clock import Countdown
+from assets import MovingImages
 from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
@@ -20,7 +21,7 @@ class KeySettings:
 	run:int
 
 class Player(GameObject):
-	def __init__(self, pos, level, key_settings:KeySettings):		
+	def __init__(self, pos, level, key_settings:KeySettings, player_asset: MovingImages):		
 		super().__init__(
 			level=level,
 			group=[level.group_visible, level.group_player],
@@ -45,7 +46,8 @@ class Player(GameObject):
 		#movement
 		self.rot_direction = 0
 		self.angle = 0
-		self.animation = SpriteAnimation(self, Assets.player1.down_idle, 8)
+		self.player_asset = player_asset
+		self.animation = SpriteAnimation(self, self.player_asset.down_idle, 8)
 		self.sprite_angle = 90
 		self.circle_rect = Assets.circle.get_rect(center=self.rect.center)
 		self.arrow_img = Assets.arrow
@@ -128,11 +130,11 @@ class Player(GameObject):
 
 	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:
-			self.animation.set_images(Assets.player1.get_idle_sequence_from_angle(self.angle), reset=False)
+			self.animation.set_images(self.player_asset.get_idle_sequence_from_angle(self.angle), reset=False)
 			self.animation.set_animation_speed(1)
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
-			self.animation.set_images(Assets.player1.get_move_sequence_from_angle(self.angle), reset=False)
+			self.animation.set_images(self.player_asset.get_move_sequence_from_angle(self.angle), reset=False)
 			self.animation.set_animation_speed(8)
 
 		self.animation.update(delta_time)
@@ -170,8 +172,8 @@ class KeySettings:
 
 class Player1(Player):
 	def __init__(self, pos, level):
-		super().__init__(pos, level, KeySettings(pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_g, pygame.K_j, pygame.K_h,pygame.K_LSHIFT))
+		super().__init__(pos, level, KeySettings(pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_g, pygame.K_j, pygame.K_h,pygame.K_LSHIFT), Assets.player1)
 
 class Player2(Player):
 	def __init__(self, pos, level):
-		super().__init__(pos, level, KeySettings(pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_i, pygame.K_p, pygame.K_o,pygame.K_u))
+		super().__init__(pos, level, KeySettings(pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_i, pygame.K_p, pygame.K_o,pygame.K_u), Assets.player2)

@@ -60,6 +60,7 @@ class MovingImages:
 
 class Assets():
 	font: pygame.font.Font = None
+	font_medium: pygame.font.Font = None
 	font_large: pygame.font.Font = None
 	grass_tileset: pygame.Surface = None
 	water_tileset : pygame.Surface = None
@@ -69,11 +70,14 @@ class Assets():
 	smoke_effect: pygame.Surface = None
 	vision:pygame.Surface = None
 	player1: MovingImages = None
+	player2: MovingImages = None
 	frog: MovingImages = None
 	def init():
 		Assets.font = pygame.font.Font("graphics/font/FVF Fernando 08.ttf", 24)
+		Assets.font_medium = pygame.font.Font("graphics/font/FVF Fernando 08.ttf", 32)
 		Assets.font_large = pygame.font.Font("graphics/font/FVF Fernando 08.ttf", 48)
 
+		
 		Assets.grass_tileset = pygame.image.load('graphics/pipoya_grass.png').convert_alpha()
 		Assets.water_tileset = pygame.image.load('graphics/pipoya_water.png').convert_alpha()
 		Assets.chip_tileset = pygame.image.load('graphics/pipoya_chip.png').convert_alpha()
@@ -91,6 +95,16 @@ class Assets():
 			*(Assets._create_animation_sprites(player1_img, i, 1, (30, 50)) for i in range(12, 14)),
 			*(Assets._create_animation_sprites(player1_img, i, 2, (30, 50)) for i in range(14, 16))
 			)
+
+		player2_img = pygame.image.load('graphics/player2.png').convert_alpha()
+		Assets.player2 = MovingImages(
+			*(Assets._create_animation_sprites(player2_img, i, 2, (30, 50)) for i in range(8)),
+			Assets._create_animation_sprites(player2_img, 8, 1, (30, 50)),
+                				*(Assets._create_animation_sprites(player2_img, i, 2, (30, 50)) for i in range(9, 12)),
+				*(Assets._create_animation_sprites(player2_img, i, 1, (30, 50)) for i in range(12, 14)),
+                				*(Assets._create_animation_sprites(player2_img, i, 2, (30, 50)) for i in range(14, 16))
+		)
+
 		Assets.frog = MovingImages(
 			*(Assets._create_animation_sprites(frog_img, i, 2, (32, 32)) for i in range(8)),
 			*(Assets._create_animation_sprites(frog_img, i, 1, (32, 32)) for i in range(8, 16))

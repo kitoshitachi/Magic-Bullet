@@ -3,13 +3,15 @@ from typing import List
 import pygame
 from NPC import NPC
 from camera import Camera
+from clock import Countdown
+from game_over import GameOver
 from debug import get_debug_surface
 from settings import *
 from map_parser import MapParser
 from player import Player, Player1, Player2
 
 class Level:
-	def __init__(self, map_name):
+	def __init__(self, map_name, on_main_menu):
 		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
 
@@ -37,9 +39,15 @@ class Level:
 		self.draw_debug = False
 		self.createNPC_time = 0
 		map_parser.init_objects(self)
-		# others
-		# self.minimap = Minimap((16, 16), self.players, map_parser.create_minimap_image())
 
+		self.on_main_menu = on_main_menu
+		# others
+		self.game_over_timer = Countdown(cooldown=1)
+		self.game_over_menu = None
+
+		# self.minimap = Minimap((16, 16), self.players, map_parser.create_minimap_image())
+		self.taken = False
+		
 		pygame.mixer.music.load("audio/MusMus QUEST - 塔 -.mp3")
 		pygame.mixer.music.play(-1)
 
@@ -55,7 +63,12 @@ class Level:
 		if NPC.Amount < 10 and current_time - self.createNPC_time >= CREATE_NPC_DURATION:
 			self.create_NPC()
 
-	def run(self, delta_time):
+	def run(self, events, delta_time):
+		if not (self.game_over_menu is None) and self.game_over_timer.is_done:
+			if self.game_over_menu.screen_shot is not None:
+				self.game_over_menu.run(events)
+				return;
+
 		self.cooldown_create_NPC()
 
 		game_objs = sorted(self.group_visible.sprites(), key=lambda sprite: sprite.hitbox.centery)
@@ -117,8 +130,17 @@ class Level:
 		self.display_surface.blit(self.camera_left.surface, (0, 0))
 		self.display_surface.blit(self.camera_right.surface, (SCREEN_WIDTH/2, 0))
 
-		# self.minimap.update()
-		# self.minimap.draw()
+		if self.game_over_menu is None and len(self.group_player) <= 1:
+			if len(self.group_player) == 0 or isinstance(self.group_player.sprites()[0], Player1):
+				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, "1 (bên trái)")
+			else:
+				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, "2 (bên phải)")
+
+			self.game_over_timer.reset()
+
+		if not (self.game_over_menu is None) and self.game_over_timer.is_done:
+			if self.game_over_menu.screen_shot is None:
+				self.game_over_menu.take_screen_shot()
 
 	@staticmethod
 	def draw_bar(surf, bar:pygame.Rect , pct, color = CYAN):

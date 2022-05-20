@@ -18,7 +18,7 @@ class Game:
 		
 		pygame.display.set_caption('Magic Bullet')
   
-		self.level = Level('map1')
+		self.level = Level('map1', self.to_main_menu)
 		self.clock = pygame.time.Clock()
 
 		self.paused = False
@@ -32,7 +32,7 @@ class Game:
 
 	def to_main_menu(self):
 		self.handle = self.run_menu
-		self.level = Level('map1')
+		self.level = Level('map1', self.to_main_menu)
 		self.paused = False
 		self.pause_menu.reset()
 
@@ -66,7 +66,7 @@ class Game:
 			self.pause_menu.run(events)
 		else:
 			self.screen.fill('black')
-			self.level.run(delta_time)
+			self.level.run(events, delta_time)
 
 if __name__ == '__main__':
 	game = Game()
