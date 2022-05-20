@@ -12,7 +12,7 @@ class Game:
 		
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 		self.display_surface = pygame.display.get_surface()
-		self.assets = Assets()
+		Assets()
 
 		self.main_menu = MainMenu(self.start_game, self.display_surface)
 		self.pause_menu = PauseMenu(self.resume_game, self.to_main_menu, self.display_surface)
