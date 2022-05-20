@@ -2,7 +2,11 @@
 #color
 import pygame
 
-
+TRANSPARENT = (0, 0, 0, 0)
+MENU_LIGHT_GREEN = (208, 234, 132)
+MENU_DARK_GREEN = (90, 105, 23)
+MENU_BLUE = (22, 170, 177)
+MENU_PAUSE_BG = (0, 0, 0, 100)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 DARKGREY = (40, 40, 40)

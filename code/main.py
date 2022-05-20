@@ -1,5 +1,7 @@
 import pygame, sys, pygame_menu
 from assets import Assets
+from pause_menu import PauseMenu
+from main_menu import MainMenu
 from settings import *
 from level import Level
 
@@ -10,15 +12,34 @@ class Game:
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 		self.display_surface = pygame.display.get_surface()
 		Assets.init()
-		self.menu = pygame_menu.Menu("hello", 100, 100)
+
+		self.main_menu = MainMenu(self.start_game, self.display_surface)
+		self.pause_menu = PauseMenu(self.resume_game, self.to_main_menu, self.display_surface)
+		
 		pygame.display.set_caption('Magic Bullet')
   
 		self.level = Level('map1')
 		self.clock = pygame.time.Clock()
 
-	def run(self):
+		self.paused = False
+		self.handle = self.run_menu
+
+	def start_game(self):
+		self.handle = self.run_level
+
+	def resume_game(self):
+		self.paused = False
+
+	def to_main_menu(self):
+		self.handle = self.run_menu
+		self.level = Level('map1')
+		self.paused = False
+		self.pause_menu.reset()
+
+	def run(self): 
 		while True:
-			for event in pygame.event.get():
+			events = pygame.event.get()
+			for event in events:
 				if event.type == pygame.QUIT:
 					pygame.quit()
 					sys.exit()
@@ -27,11 +48,25 @@ class Game:
 					pygame.display.toggle_fullscreen()
 
 			delta_time = self.clock.tick(FPS) / 1000.0
-			self.screen.fill('black')
-			self.level.run(delta_time)
+
+			self.handle(events, delta_time)
 
 			pygame.display.update()
 
+	def run_menu(self, events, _):
+		self.main_menu.run(events)
+
+	def run_level(self, events, delta_time):
+		for event in events:
+			if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE and self.paused == False:
+				self.paused = True
+				self.pause_menu.take_screen_shot()
+
+		if self.paused:
+			self.pause_menu.run(events)
+		else:
+			self.screen.fill('black')
+			self.level.run(delta_time)
 
 if __name__ == '__main__':
 	game = Game()
