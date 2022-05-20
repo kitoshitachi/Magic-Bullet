@@ -46,3 +46,7 @@ RATE = [1] * 70 + [2]* 25 + [3]*5
 
 COLLISION_DETECTION_RADIUS = 32 * 3
 
+#file path
+IMAGE_PATH = 'asset/images/'
+FONT_PATH = 'asset/font/FVF Fernando 08.ttf'
+AUDIO_PATH = 'asset/audio/'

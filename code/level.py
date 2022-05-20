@@ -48,7 +48,7 @@ class Level:
 		# self.minimap = Minimap((16, 16), self.players, map_parser.create_minimap_image())
 		self.taken = False
 		
-		pygame.mixer.music.load("audio/MusMus QUEST - 塔 -.mp3")
+		pygame.mixer.music.load(AUDIO_PATH + "MusMus QUEST - 塔 -.mp3")
 		pygame.mixer.music.play(-1)
 
 	def create_player(self) -> List[Player]:

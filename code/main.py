@@ -1,4 +1,4 @@
-import pygame, sys, pygame_menu
+import pygame, sys
 from assets import Assets
 from pause_menu import PauseMenu
 from main_menu import MainMenu
@@ -6,12 +6,13 @@ from settings import *
 from level import Level
 
 class Game:
+	
 	def __init__(self):
 		pygame.init()
 		
 		self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 		self.display_surface = pygame.display.get_surface()
-		Assets.init()
+		self.assets = Assets()
 
 		self.main_menu = MainMenu(self.start_game, self.display_surface)
 		self.pause_menu = PauseMenu(self.resume_game, self.to_main_menu, self.display_surface)

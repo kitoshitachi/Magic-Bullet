@@ -1,10 +1,8 @@
-import pathlib
 import pygame
 import pygame_menu
 from assets import Assets
-from settings import MENU_PAUSE_BG
+from settings import *
 
-from settings import SCREEN_HEIGHT, SCREEN_WIDTH, MENU_LIGHT_GREEN, MENU_DARK_GREEN, MENU_BLUE, TRANSPARENT
 
 class GameOver:
 	def __init__(self, on_main_menu, surface, playerName):
@@ -39,7 +37,7 @@ class GameOver:
 			"selection_color": selection_color,
 		}
 
-		menu.add.image("graphics/player1_win.png" if playerName == 1 else "graphics/player2_win.png", margin=(0, 10))
+		menu.add.image(IMAGE_PATH + ("menu/player1_win.png" if playerName == 1 else "menu/player2_win.png"), margin=(0, 10))
 		self.first_widget = menu.add.button('Về màn hình chính', on_main_menu, margin=(0, 30), **button_style)
 		menu.add.button('Thoát', pygame_menu.events.EXIT, **button_style)
 

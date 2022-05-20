@@ -1,7 +1,7 @@
 import itertools
 import pygame
 from assets import Assets
-from settings import TILESIZE
+from settings import *
 from smoke_effect import SmokeEffect
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
@@ -10,7 +10,7 @@ from settings import BULLET_MAX_TIME_TO_LIVE
 from debug import debug
 
 class Bullet(GameObject):
-	FIRE_SFX = pygame.mixer.Sound("audio/bullet_fire.wav")
+	FIRE_SFX = pygame.mixer.Sound(AUDIO_PATH + 'bullet_fire.wav')
 	FIRE_SFX.set_volume(0.3)
 
 	def __init__(self,player,level):
@@ -18,7 +18,7 @@ class Bullet(GameObject):
 		super().__init__(
 		level=level,
 		group=[level.group_visible, level.group_bullet],
-		image=Assets.bullet,
+		image=Assets.bullet_img,
 		hitbox_inflation=(-16, -16),
 		pos=player.hitbox.topleft,
 		direction=pygame.math.Vector2(1, 0).rotate(player.angle),

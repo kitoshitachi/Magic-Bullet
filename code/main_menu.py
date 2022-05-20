@@ -2,6 +2,7 @@ import pathlib
 import pygame
 import pygame_menu
 from assets import Assets
+from settings import *
 
 from settings import SCREEN_HEIGHT, SCREEN_WIDTH, MENU_LIGHT_GREEN, MENU_DARK_GREEN, MENU_BLUE
 
@@ -13,7 +14,7 @@ class MainMenu:
 
 		theme = pygame_menu.themes.THEME_BLUE.copy()
 		theme.background_color = pygame_menu.BaseImage(
-			"graphics/main_menu_bg.png", pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY
+			IMAGE_PATH + "menu/main_menu_bg.png", pygame_menu.baseimage.IMAGE_MODE_REPEAT_XY
 		)
 		theme.title_background_color = border_color
 

@@ -69,7 +69,7 @@ class NPC(GameObject):
 
 			self.angle = randint(0, 360)
 			self.direction = pygame.math.Vector2(1, 0).rotate(self.angle)
-			self.animation.set_images(Assets.frog.get_move_sequence_from_angle(self.angle))
+			self.animation.set_images(Assets.frog.move_squence(self.angle))
 
 	def update(self, delta_time):
 		# self.target()
@@ -77,7 +77,7 @@ class NPC(GameObject):
 			pass
 			# self.rect.topleft
 			# self.angle = self.direction.angle_to(pygame.math.Vector2(1, 0))
-			# self.animation.set_images(Assets.frog.get_move_sequence_from_angle(self.angle))
+			# self.animation.set_images(Assets.frog.move_squence(self.angle))
 
 			# self.player = None
 		else:
@@ -94,10 +94,10 @@ class NPC(GameObject):
 
 	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:
-			self.animation.set_images(Assets.frog.get_idle_sequence_from_angle(self.sprite_angle), reset=False)
+			self.animation.set_images(Assets.frog.idle_sequence(self.sprite_angle), reset=False)
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
-			self.animation.set_images(Assets.frog.get_move_sequence_from_angle(self.sprite_angle), reset=False)
+			self.animation.set_images(Assets.frog.move_squence(self.sprite_angle), reset=False)
 
 		self.animation.update(delta_time)
 	

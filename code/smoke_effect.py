@@ -1,9 +1,9 @@
-import pygame
 from assets import Assets
 from sprite_animation import SpriteAnimation
 from game_object import GameObject
+
 class SmokeEffect(GameObject):
-	FIRE_SFX = pygame.mixer.Sound("audio/reflect.wav")
+	FIRE_SFX = Assets.audio
 	FIRE_SFX.set_volume(0.4)
 
 	def __init__(self, pos, level):
