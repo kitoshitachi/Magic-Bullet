@@ -29,7 +29,7 @@ class NPC(GameObject):
 		self.memory_direction = None
 		self.default = pygame.math.Vector2(1,0)
 		self.time_to_live = choice(RATE)
-		self.mp = (NPC_MANA + choice(RATE)) * self.time_to_live
+		self.mp = (self.time_to_live + choice(RATE)) * NPC_MANA
 		self.sprite_angle = 0
 		self.angle = 0
 		self.player = None

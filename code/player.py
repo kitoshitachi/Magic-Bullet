@@ -107,7 +107,7 @@ class Player(GameObject):
 
 	def npc_collision(self):
 		hits = pygame.sprite.spritecollide(self,self.level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
-		self.mp -= len(hits)*5
+		self.mp -= len(hits)*20/FPS
 
 	def update(self, delta_time):
 		if self.stunt_timer.is_done:
