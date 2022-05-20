@@ -131,11 +131,11 @@ class Player(GameObject):
 	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:
 			self.animation.set_images(self.player_asset.get_idle_sequence_from_angle(self.angle), reset=False)
-			self.animation.set_animation_speed(1)
+			self.animation.set_animation_speed = 1
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
 			self.animation.set_images(self.player_asset.get_move_sequence_from_angle(self.angle), reset=False)
-			self.animation.set_animation_speed(8)
+			self.animation.set_animation_speed = 8
 
 		self.animation.update(delta_time)
 

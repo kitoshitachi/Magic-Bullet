@@ -1,38 +1,62 @@
-from matplotlib import animation, image
 class SpriteAnimation():
-  def __init__(self, target, images, animation_speed=60, loop=True):
-    self.images = images
-    self.target = target
-    self.animation_speed = animation_speed
-    self.loop = loop
+	def __init__(self, target, images, animation_speed=60, loop=True):
+		'''
+		make the sprite has Animation
 
-    self.current_frame = 0
-    self.ended = False
+		parameter target: the object have animation
+		parameter images: images of animation
+		parameter animation_speed: animated motion speed
+		parameter loop: given True or False to loop the animation
+		'''
+		self._images = images
+		self._target = target
+		self._animation_speed = animation_speed
+		self.loop = loop
 
-  def update(self, delta_time):
-    self.current_frame += self.animation_speed * delta_time
+		self._current_frame = 0
+		self._ended = False
 
-    length = len(self.images)
-    if self.current_frame >= length:
-      if self.loop:
-        self.current_frame -= (self.current_frame // length) * length
-      else:
-        self.current_frame = length - 1
-        self.ended = True
+	def update(self, delta_time):
+		'''
+		update the animation at this delta_time
+		'''
+		self._current_frame += self.animation_speed * delta_time
 
-    self.target.image = self.images[int(self.current_frame)]
+		length = len(self._images)
+		if self.current_frame >= length:
+			if self.loop:
+				self._current_frame -= (self.current_frame // length) * length
+			else:
+				self._current_frame = length - 1
+				self._ended = True
 
-  def get_current_frame(self):
-    return int(self.current_frame)
+		self._target.image = self._images[self.current_frame]
 
-  def is_animation_ended(self):
-    return self.ended 
+	@property
+	def current_frame(self):
+		'''return current frame'''
+		return int(self._current_frame)
 
-  def set_images(self, images, reset=True):
-    self.images = images
-    if reset:
-      self.current_frame = 0
+	@property
+	def is_ended(self):
+		'''return True if animation is ended else False'''
+		return self._ended 
 
-  def set_animation_speed(self, speed):
-    self.animation_speed = speed
-  
+	def set_images(self, images, reset=True):
+		'''
+		paramater images: images of animation
+		paramater reset: default = True , this will be reset animation to new animation
+		'''
+		self._images = images
+		if reset:
+			self._current_frame = 0
+
+	@property
+	def animation_speed(self):
+		'''animated motion speed'''
+		return self._animation_speed
+
+	@animation_speed.setter
+	def animation_speed(self, speed):
+		self._animation_speed = speed
+	
