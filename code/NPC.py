@@ -1,12 +1,13 @@
 import itertools
-from random import randint
+from random import choice, randint
 import pygame
 from assets import Assets
+from settings import *
 from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
-from utils import Utils
 from debug import debug
+
 class NPC(GameObject):
 	Amount = 0
 	def __init__(self, pos, level):
@@ -20,29 +21,44 @@ class NPC(GameObject):
 			direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
 			speed=300)
 
+
 		self.animation = SpriteAnimation(self, Assets.frog.down_idle, 4)
 		self.step = 0
 		self.max_step = randint(80,120)
 		#movement
-		self.memory_direction = pygame.math.Vector2(randint(0,1),randint(0,1))
+		self.memory_direction = None
 		self.default = pygame.math.Vector2(1,0)
-		self.time_to_live = randint(1,4)
+		self.time_to_live = choice(RATE) + 1
+		self.mp = (NPC_MANA +choice(RATE)) * self.time_to_live
 		self.sprite_angle = 0
-
-		self.angle = pygame.Vector2()
+		self.angle = 0
 		self.player = None
-
 	def obstacle_collision(self):
 		obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
 		CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
 
-	def see_player(self):
-		return False
+	def target(self):
+		d_max = -1
+		for player in self.level.group_player:
+			dx = player.rect.x - self.rect.x
+			dy = player.rect.y - self.rect.y
+			d = dx*dx+dy*dy
+			if d <= 32*32*10:
+				for wall in self.level.group_obstacle:
+					if pygame.Rect.clipline(wall.rect,self.rect.center,player.rect.center) is not None:
+						if d > d_max:
+							self.player = player
+							d_max = d
+						break
 
 	def hit(self):
 		self.time_to_live -= 1
+		if self.time_to_live <= 0:
+			return self.mp
+		else:
+			return 0
 
-	def randomMove(self):
+	def random_move(self):
 		if self.step >= self.max_step:
 			self.step = 0
 			self.max_step = randint(40,60)
@@ -56,10 +72,16 @@ class NPC(GameObject):
 			self.animation.set_images(Assets.frog.get_move_sequence_from_angle(self.angle))
 
 	def update(self, delta_time):
-		if self.see_player() == True:
-			Utils.face_toward(self,self.player.rect.center)
+		# self.target()
+		if self.player is not None:
+			pass
+			# self.rect.topleft
+			# self.angle = self.direction.angle_to(pygame.math.Vector2(1, 0))
+			# self.animation.set_images(Assets.frog.get_move_sequence_from_angle(self.angle))
+
+			# self.player = None
 		else:
-			self.randomMove()
+			self.random_move()
 		
 		self.animation.update(delta_time)
 			
@@ -78,3 +100,4 @@ class NPC(GameObject):
 			self.animation.set_images(Assets.frog.get_move_sequence_from_angle(self.sprite_angle), reset=False)
 
 		self.animation.update(delta_time)
+	

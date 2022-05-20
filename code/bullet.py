@@ -89,7 +89,7 @@ class Bullet(GameObject):
 							self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
 			SmokeEffect(smoke_pos, self.level)
 
-			npc.hit()
+			self.owner.mp += npc.hit()
 			self.kill()
 
 		CollisionEngine.detect_multiple(self, self.level.group_NPC, response)

@@ -103,6 +103,10 @@ class Player(GameObject):
 		self.direction.x, self.direction.y = 0, 0
 		self.rot_direction = 0
 
+	def npc_collision(self):
+		hits = pygame.sprite.spritecollide(self,self.level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
+		self.mp -= len(hits)*5
+
 	def update(self, delta_time):
 		if self.stunt_timer.is_done:
 			self.input()	
@@ -113,8 +117,14 @@ class Player(GameObject):
 			self.stamina += 1 
 
 		self.handle_collision()
+		self.npc_collision()
 		self.update_rotation(delta_time)
 		self.update_animation(delta_time)
+		if self.mp < 0:
+			self.mp = 0
+		if self.mp >= PLAYER_MANA:
+			self.mp = PLAYER_MANA
+		
 
 	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:

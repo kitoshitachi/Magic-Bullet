@@ -1,7 +1,7 @@
 import random
 from typing import List
-from NPC import NPC
 import pygame
+from NPC import NPC
 from camera import Camera
 from debug import get_debug_surface
 from settings import *
@@ -23,7 +23,6 @@ class Level:
 		self.group_bullet = pygame.sprite.Group()
 		self.group_player = pygame.sprite.Group()
 		self.group_NPC = pygame.sprite.Group()
-
 		self.camera_left = Camera(self.map_ground_image.get_size(), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
 		self.camera_right = Camera(self.map_ground_image.get_size(), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
 		self.cameras = [self.camera_left, self.camera_right]
