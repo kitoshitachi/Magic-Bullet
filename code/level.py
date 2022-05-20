@@ -132,9 +132,9 @@ class Level:
 
 		if self.game_over_menu is None and len(self.group_player) <= 1:
 			if len(self.group_player) == 0 or isinstance(self.group_player.sprites()[0], Player1):
-				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, "1 (bên trái)")
+				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, 1)
 			else:
-				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, "2 (bên phải)")
+				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, 2)
 
 			self.game_over_timer.reset()
 

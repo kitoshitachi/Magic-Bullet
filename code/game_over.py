@@ -28,7 +28,7 @@ class GameOver:
 
 		theme.title_offset = (130, SCREEN_HEIGHT/2 - 200)
 
-		menu = pygame_menu.Menu(f'Người chơi {playerName} chiến thắng!', *surface.get_size(), theme=theme)
+		menu = pygame_menu.Menu(f'Người chơi {playerName} {"(bên trái)" if playerName == 1 else "(bên phải)"} chiến thắng!', *surface.get_size(), theme=theme)
 
 		button_style = {
 			"background_color": button_color,
@@ -39,8 +39,10 @@ class GameOver:
 			"selection_color": selection_color,
 		}
 
+		menu.add.image("graphics/player1_win.png" if playerName == 1 else "graphics/player2_win.png", margin=(0, 10))
 		self.first_widget = menu.add.button('Về màn hình chính', on_main_menu, margin=(0, 30), **button_style)
 		menu.add.button('Thoát', pygame_menu.events.EXIT, **button_style)
+
 
 		self.menu = menu
 		self.surface = surface
