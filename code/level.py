@@ -85,28 +85,30 @@ class Level:
 			for camera in self.cameras:
 				game_obj.render(camera)
 
-		keys_press = pygame.key.get_pressed()
+		# debug game
+		# keys_press = pygame.key.get_pressed()
+		# if keys_press[pygame.K_2]:
+		# 	for player in self.players:
+		# 		player.mp = PLAYER_MANA
 
-		if keys_press[pygame.K_2]:
-			for player in self.players:
-				player.mp = PLAYER_MANA
+		# if keys_press[pygame.K_1]:
+		# 	self.draw_debug = not self.draw_debug
 
-		if keys_press[pygame.K_1]:
-			self.draw_debug = not self.draw_debug
-
-		if self.draw_debug:
-			for game_obj in self.group_all.sprites():
-				for camera in self.cameras:
-					pygame.draw.rect(camera.surface, CYAN, camera.apply_rect(game_obj.hitbox), 1)
+		# if self.draw_debug:
+		# 	for game_obj in self.group_all.sprites():
+		# 		for camera in self.cameras:
+		# 			pygame.draw.rect(camera.surface, CYAN, camera.apply_rect(game_obj.hitbox), 1)
 
 		player_bar = PLAYER_MANA_BAR.copy()
 		player_bar.x = (self.camera_left.width - player_bar.width)/2
 		player_bar.y = self.camera_left.height - 40
 		self.draw_bar(self.camera_left.surface, player_bar.copy(), self.players[0].mp / PLAYER_MANA)
 		self.draw_bar(self.camera_right.surface, player_bar.copy(), self.players[1].mp / PLAYER_MANA)
+
 		player_bar.y +=20
 		self.draw_bar(self.camera_left.surface, player_bar.copy(), self.players[0].stamina / PLAYER_STAMINA,ORANGE)
 		self.draw_bar(self.camera_right.surface, player_bar.copy(), self.players[1].stamina / PLAYER_STAMINA,ORANGE)
+
 		player_bar.y -= 25
 		player_bar.height = 5
 		pct = self.players[0].attack_timer.elapsed_time/ATTACK_COOLDOWN
