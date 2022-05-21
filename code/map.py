@@ -7,55 +7,61 @@ from Obstacle import Obstacle
 from assets import Assets
 import pygame
 
-class Map():
+class Map:
 	def __init__(self, map_name):
 		self.path = f'map/{map_name}.json'
 
 		with open(self.path) as f:
 			map_json = json.load(f)
-			self.tileset_firstgids = [ts["firstgid"] for ts in map_json["tilesets"]]
-			self.map_layers = map_json["layers"] 
-			self.width = map_json["width"] * TILESIZE
-			self.height = map_json["height"] * TILESIZE
+			self._tileset_firstgids = [ts["firstgid"] for ts in map_json["tilesets"]]
+			self._map_layers = map_json["layers"] 
+			self._width = map_json["width"] * TILESIZE
+			self._height = map_json["height"] * TILESIZE
 
-		self.tilesets = [Assets.grass_tileset, Assets.chip_tileset, Assets.water_tileset]
-		self.ground = self.create_layer('ground')
-		self.obstacle = self.create_layer('obstacle_sprite')
-		self.spawn_points = self.create_spawn_points()
+		self._tilesets = (Assets.grass_tileset, Assets.chip_tileset, Assets.water_tileset)
+		self._ground_layer = self._create_layer('ground')
+		self._obstacle_layer = self._create_layer('obstacle_sprite')
+		self._spawn_points = self._create_spawn_points()
+
+	@property
+	def width(self):
+		return self._width
+
+	@property
+	def width(self):
+		return self._height
 
 	@property
 	def size(self):
 		'''return (width, height)'''
-		return (self.width,self.height)
+		return (self._width,self._height)
 
-	def create_layer(self,layer_name):
-		'''
-		parameter layer_name: the name of layer
-		return surface
-		'''
-		image = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-		layers = filter(lambda layer: layer_name in layer["name"], self.map_layers)
-		for layer in layers:
-			for chunk in layer['chunks']:
-				tile_ids, _, w, _, _ = chunk.values()
-				for index, tile_gid in enumerate(tile_ids):
-					if tile_gid:
-						x = (index % w) 
-						y = floor(index/w)
-						src, area = self.get_tile(tile_gid)
 
-						image.blit(src, (x * TILESIZE, y * TILESIZE), area)
-		return image
 
-	def get_tile(self, tile_gid):
+	@property
+	def ground_layer(self):
+		'''return surface ground layer'''
+		return self._ground_layer
+	
+	property
+	def obstacle_layer(self):
+		'''return surface obstacle layer'''
+		return self._obstacle_layer
+
+	@property
+	def spawn_points(self):
+		'''return tuple position , player can spawn in them'''
+		return self._spawn_points
+
+	def _get_tile(self, tile_gid):
 		'''return tileset, area'''
-		tileset = self.tilesets[-1]
-		id_offset = self.tileset_firstgids[-1]
+		tileset = self._tilesets[-1]
+		id_offset = self._tileset_firstgids[-1]
 
-		for index, firstgid in enumerate(self.tileset_firstgids[1:], 1):
+		for index, firstgid in enumerate(self._tileset_firstgids[1:], 1):
 			if tile_gid < firstgid:
-				tileset = self.tilesets[index - 1]
-				id_offset = self.tileset_firstgids[index - 1]
+				tileset = self._tilesets[index - 1]
+				id_offset = self._tileset_firstgids[index - 1]
 				break
 
 		tileset_cols = floor(tileset.get_width() / TILESIZE)
@@ -63,8 +69,28 @@ class Map():
 		x,y = tile_id % tileset_cols, floor(tile_id / tileset_cols)
 		return tileset, (x * TILESIZE, y * TILESIZE, TILESIZE, TILESIZE)
 
+	def _create_layer(self,layer_name):
+		'''
+		parameter layer_name: the name of layer
+		return surface
+		'''
+		image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
+		for layer in filter(lambda layer: layer_name in layer["name"], self._map_layers):
+			for chunk in layer['chunks']:
+				tile_ids, _, w, _, _ = chunk.values()
+				for index, tile_gid in enumerate(tile_ids):
+					if tile_gid:
+						x = (index % w) 
+						y = floor(index/w)
+						src, area = self._get_tile(tile_gid)
+
+						image.blit(src, (x * TILESIZE, y * TILESIZE), area)
+		return image
+
+
 	def init_objects(self, level):
-		for object_layer in filter(lambda layer: "object" in layer["name"], self.map_layers):
+		''''''
+		for object_layer in filter(lambda layer: "object" in layer["name"], self._map_layers):
 			layer_name = object_layer["name"]
 
 			for chunk in object_layer["chunks"]:
@@ -74,19 +100,16 @@ class Map():
 				check_arr_boundary = [False] * w * h
 
 				for index, tile_gid in enumerate(tile_ids):
-					### no tile? no maiden?
-					if tile_gid == 0:
-						continue
+					if tile_gid:
+						x = index % w
+						y = floor(index / w)
 
-					x = index % w
-					y = floor(index / w)
-
-					if "small" in layer_name and not check_arr_small[x + y * w]:
-						self._create_obstacle_small((x, y), (offset_x, offset_y), level, chunk, check_arr_small)
-					elif "tall" in layer_name and not check_arr_tall[x + y * w]:
-						self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr_tall)
-					elif "boundary" in layer_name and not check_arr_boundary[x + y * w]:
-						self._create_boundary((x, y), (offset_x, offset_y), level, chunk, check_arr_boundary)
+						if "small" in layer_name and not check_arr_small[x + y * w]:
+							self._create_obstacle_small((x, y), (offset_x, offset_y), level, chunk, check_arr_small)
+						elif "tall" in layer_name and not check_arr_tall[x + y * w]:
+							self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr_tall)
+						elif "boundary" in layer_name and not check_arr_boundary[x + y * w]:
+							self._create_boundary((x, y), (offset_x, offset_y), level, chunk, check_arr_boundary)
 
 	def _create_obstacle_small(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
 		x, y = tile_pos
@@ -96,7 +119,7 @@ class Map():
 		_, _, ow, oh = area
 		
 		hitbox = pygame.Rect(pos_x, pos_y, ow, oh)
-		Obstacle(self.obstacle, area, (pos_x, pos_y), hitbox, level)
+		Obstacle(self._obstacle_layer, area, (pos_x, pos_y), hitbox, level)
 
 	def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
 		x, y = tile_pos
@@ -106,7 +129,7 @@ class Map():
 		_, _, ow, oh = area
 
 		hitbox = pygame.Rect(pos_x, pos_y + oh - TILESIZE, ow, TILESIZE)
-		Obstacle(self.obstacle, area, (pos_x, pos_y), hitbox, level)
+		Obstacle(self._obstacle_layer, area, (pos_x, pos_y), hitbox, level)
 
 	def _create_boundary(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
 		x, y = tile_pos
@@ -169,11 +192,12 @@ class Map():
 
 		return (left * TILESIZE, top * TILESIZE, (right - left + 1) * TILESIZE, (bottom - top + 1) * TILESIZE)
 
-	def create_spawn_points(self):
-		spawn_points = []  
-		for layer in filter(lambda layer: "spawn_area" in layer["name"], self.map_layers):
+	def _create_spawn_points(self):
+		'''make the start points for player'''
+		spawn_points = ()  
+		for layer in filter(lambda layer: "spawn_area" in layer["name"], self._map_layers):
 			for chunk in layer["chunks"]:
-				tile_ids,h, w, offset_x, offset_y,  = chunk.values()
+				tile_ids,_, w, _, _,  = chunk.values()
 				for index, tile_gid in enumerate(tile_ids):
 					### no tile? no maiden?
 					if tile_gid == 0:
@@ -181,6 +205,7 @@ class Map():
 
 					x = index % w
 					y = floor(index / w)
-					spawn_points.append((x * TILESIZE, y * TILESIZE))
+					spawn_points += ((x * TILESIZE, y * TILESIZE),)
 
 		return spawn_points
+	

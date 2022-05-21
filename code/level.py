@@ -79,7 +79,7 @@ class Level:
 		self.camera_right.update(self.players[1])
 			
 		for camera in self.cameras:
-			camera.surface.blit(self.map.ground, camera.apply_rect(self.map.ground.get_rect()))
+			camera.surface.blit(self.map.ground_layer, camera.apply_rect(self.map.ground_layer.get_rect()))
 
 		for game_obj in game_objs:
 			for camera in self.cameras:
