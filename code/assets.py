@@ -6,6 +6,9 @@ from settings import *
 
 @dataclass
 class MovingImages:
+	'''
+	dataclass to get surface moving and idle
+	'''
 	up_move: Tuple[pygame.Surface]
 	down_move: Tuple[pygame.Surface]
 	left_move: Tuple[pygame.Surface]
@@ -72,9 +75,11 @@ class MovingImages:
 			return sequences[7]
 
 	def move_squence(self, angle):
+		'''return the tuple moving animation from angle'''
 		return self._from_angle(angle, self._move_sequences)
 
 	def idle_sequence(self, angle):
+		'''return the tuple idle animation from angle'''
 		return self._from_angle(angle, self._idle_sequences)
 
 
@@ -90,8 +95,9 @@ pygame.mixer.init()
 pygame.display.init()
 pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE | pygame.SCALED)
 
-@dataclass
+@dataclass(frozen=True)
 class Assets():
+	'''class data save all asset of game'''
 	#font
 	font = pygame.font.Font(FONT_PATH, 24)
 	font_medium =  pygame.font.Font(FONT_PATH, 32)
@@ -140,10 +146,17 @@ class Assets():
 
 	@staticmethod
 	def _create_animation_sprites(src, row, amount, sprite_size):
-		sprites = ()
+		'''
+		parameter src: source surface animation
+		parameter row:
+		parameter amount: amount of animation
+		parameter sprite_size: size of sprite
+		return tuple surface animation
+		'''
+		sprites = []
 		for i in range(amount):
 			img = pygame.Surface(sprite_size, pygame.SRCALPHA)
 			img.blit(src, (0, 0), (i * sprite_size[0], row * sprite_size[1], *sprite_size))
-			sprites += (img,)
+			sprites.append(img)
 
-		return sprites
+		return tuple(sprites)
