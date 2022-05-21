@@ -5,7 +5,7 @@ class SpriteAnimation():
 
 		parameter target: the object have animation
 		parameter images: images of animation
-		parameter animation_speed: animated motion speed
+		parameter animation_speed: image change per second
 		parameter loop: given True or False to loop the animation
 		'''
 		self._images = images
@@ -18,7 +18,7 @@ class SpriteAnimation():
 
 	def update(self, delta_time):
 		'''
-		update the animation at this delta_time
+		update the animation
 		'''
 		self._current_frame += self.animation_speed * delta_time
 
@@ -53,7 +53,7 @@ class SpriteAnimation():
 
 	@property
 	def animation_speed(self):
-		'''animated motion speed'''
+		'''image change per second'''
 		return self._animation_speed
 
 	@animation_speed.setter
