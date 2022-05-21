@@ -1,14 +1,12 @@
 import random
-from typing import List
 import pygame
 from NPC import NPC
 from camera import Camera
 from clock import Countdown
 from game_over import GameOver
-from debug import get_debug_surface
 from settings import *
-from map_parser import MapParser
-from player import Player, Player1, Player2
+from map import Map
+from player import Player1, Player2
 
 class Level:
 	def __init__(self, map_name, on_main_menu):
@@ -16,8 +14,7 @@ class Level:
 		self.display_surface = pygame.display.get_surface()
 
 		# sprite group setup
-		map_parser = MapParser(map_name)
-		self.map_ground_image = map_parser.create_map_ground_image()
+		self.map = Map(map_name)
 		self.group_all = pygame.sprite.Group()
 		self.group_visible = pygame.sprite.Group()
 		self.group_obstacle = pygame.sprite.Group()
@@ -25,12 +22,11 @@ class Level:
 		self.group_bullet = pygame.sprite.Group()
 		self.group_player = pygame.sprite.Group()
 		self.group_NPC = pygame.sprite.Group()
-		self.camera_left = Camera(self.map_ground_image.get_size(), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
-		self.camera_right = Camera(self.map_ground_image.get_size(), (SCREEN_WIDTH/2, SCREEN_HEIGHT))
+		self.camera_left = Camera(self.map.size, (SCREEN_WIDTH/2, SCREEN_HEIGHT))
+		self.camera_right = Camera(self.map.size, (SCREEN_WIDTH/2, SCREEN_HEIGHT))
 		self.cameras = [self.camera_left, self.camera_right]
 
 		# sprite setup
-		self.spawn_points = map_parser.create_spawn_points()
 		self.players = self.create_player()
 
 		self.create_NPC()
@@ -38,7 +34,7 @@ class Level:
 		# others
 		self.draw_debug = False
 		self.createNPC_time = 0
-		map_parser.init_objects(self)
+		self.map.init_objects(self)
 
 		self.on_main_menu = on_main_menu
 		# others
@@ -51,11 +47,12 @@ class Level:
 		pygame.mixer.music.load(AUDIO_PATH + "MusMus QUEST - 塔 -.mp3")
 		pygame.mixer.music.play(-1)
 
-	def create_player(self) -> List[Player]:
-		return [Player1(random.choice(self.spawn_points), self), Player2(random.choice(self.spawn_points), self)]
+	def create_player(self):
+		position = random.sample(self.map.spawn_points,2)
+		return (Player1(position[0], self), Player2(position[1], self))
 
 	def create_NPC(self):
-		NPC(random.choice(self.spawn_points),self)
+		NPC(random.choice(self.map.spawn_points),self)
 		self.createNPC_time = pygame.time.get_ticks()
 
 	def cooldown_create_NPC(self):
@@ -82,7 +79,7 @@ class Level:
 		self.camera_right.update(self.players[1])
 			
 		for camera in self.cameras:
-			camera.surface.blit(self.map_ground_image, camera.apply_rect(self.map_ground_image.get_rect()))
+			camera.surface.blit(self.map.ground, camera.apply_rect(self.map.ground.get_rect()))
 
 		for game_obj in game_objs:
 			for camera in self.cameras:

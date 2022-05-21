@@ -1,11 +1,10 @@
 import pygame
-
 from settings import MINIMAP_TILE_SIZE, TILESIZE
 
+#carefull with filepath
 class Minimap(pygame.sprite.Sprite):
 	def __init__(self, pos, players, minimap_image):
 		super().__init__()
-		self.image = pygame.image.load('graphics/test/rock.png').convert_alpha()
 		self.pos = pos
 		self.players = players
 

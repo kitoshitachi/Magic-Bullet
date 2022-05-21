@@ -15,13 +15,13 @@ class Camera:
 
     def update(self, target):
         camera_w, camera_h = self.surface.get_size()
-        map_w, map_h = self.map_size
+        width, height = self.map_size
         x = -target.rect.centerx + int(camera_w / 2)
         y = -target.rect.centery + int(camera_h / 2)
 
         # limit scrolling to map size
         x = min(0, x)  # left
         y = min(0, y)  # top
-        x = max(-(map_w - camera_w), x)  # right
-        y = max(-(map_h - camera_h), y)  # bottom
-        self.camera = pygame.Rect(x, y, map_w, map_h)
+        x = max(-(width - camera_w), x)  # right
+        y = max(-(height - camera_h), y)  # bottom
+        self.camera = pygame.Rect(x, y, width, height)
