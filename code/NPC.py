@@ -1,5 +1,4 @@
 import itertools
-from math import atan2, degrees
 from random import choice, randint
 import pygame
 from assets import Assets
@@ -8,7 +7,6 @@ from settings import *
 from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
-from debug import debug
 
 class NPC(GameObject):
 	Amount = 0
