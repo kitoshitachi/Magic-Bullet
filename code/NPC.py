@@ -86,7 +86,7 @@ class NPC(GameObject):
 
 	def update(self, delta_time):
 		self.target()
-		if self.player is None or self.player.mp < 10:
+		if self.player is None: #or self.player.mp < 10:
 			self.random_move()
 		else:
 			pass
