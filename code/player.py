@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import itertools
 import pygame
 from bullet import Bullet
 from clock import Countdown
@@ -51,7 +50,7 @@ class Player(GameObject):
 		self.rot_direction = 0
 		self.angle = 0
 		self.player_asset = player_asset
-		self.animation = SpriteAnimation(self, self.player_asset.down_idle, 8)
+		self._animation = SpriteAnimation(self, self.player_asset.down_idle, 8)
 		self.sprite_angle = 90
 		self.circle_rect = Assets.circle.get_rect(center=self._rect.center)
 		self.arrow_img = Assets.arrow
@@ -105,7 +104,7 @@ class Player(GameObject):
 	def handle_collision(self):
 		'''check collision sweet AABB, respone slide'''
 		CollisionEngine.detect_multiple(self, self._level.obstacles_and_boundary, CollisionResponse.slide)
-	
+
 	def stunted(self):
 		'''stunt player'''
 		self.stunt_timer.reset()
@@ -114,9 +113,11 @@ class Player(GameObject):
 
 	def npc_collision(self):
 		'''handle collision npc'''
+
 		hits = pygame.sprite.spritecollide(self,self._level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
 		for npc in hits:
-			mana = 20/FPS
+			mana = 2
+			self.regen_timer.reset()
 			if self.mp < mana:
 				npc.mp += self.mp
 				self.mp = 0
@@ -147,14 +148,14 @@ class Player(GameObject):
 	def update_animation(self, delta_time):
 		'''update animation at this FPS'''
 		if self._direction.x == 0 and self._direction.y == 0:
-			self.animation.set_images(self.player_asset.idle_sequence(self.angle), reset=False)
-			self.animation.animation_speed = 1
+			self._animation.set_images(self.player_asset.idle_sequence(self.angle), reset=False)
+			self._animation.animation_speed = 1
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self._direction)
-			self.animation.set_images(self.player_asset.move_squence(self.angle), reset=False)
-			self.animation.animation_speed = 8
+			self._animation.set_images(self.player_asset.move_squence(self.angle), reset=False)
+			self._animation.animation_speed = 8
 
-		self.animation.update(delta_time)
+		self._animation.update(delta_time)
 
 	def update_rotation(self, delta_time):
 		'''update angle of player at this FPS'''

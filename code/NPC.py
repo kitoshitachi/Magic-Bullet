@@ -26,7 +26,7 @@ class NPC(GameObject):
 			speed=300)
 
 		self.Ox = pygame.math.Vector2(1, 0)
-		self.animation = SpriteAnimation(self, Assets.frog.down_idle, 4)
+		self._animation = SpriteAnimation(self, Assets.frog.down_idle, 4)
 		self.step = 0
 		self.max_step = randint(80,120)
 		#movement
@@ -85,7 +85,7 @@ class NPC(GameObject):
 
 			self.angle = randint(0, 360)
 			self._direction = self.Ox.rotate(self.angle)
-			self.animation.set_images(Assets.frog.move_squence(self.angle))
+			self._animation.set_images(Assets.frog.move_squence(self.angle))
 
 	def avoid_mobs(self):
 		'''avoid mobs around'''
@@ -109,10 +109,10 @@ class NPC(GameObject):
 			# self.avoid_mobs()
 
 			# self._direction = self.Ox.rotate(self.angle)
-			# self.animation.set_images(Assets.frog.move_squence(self.angle))
+			# self._animation.set_images(Assets.frog.move_squence(self.angle))
 			# self.player = None
 		
-		self.animation.update(delta_time)
+		self._animation.update(delta_time)
 			
 		self.obstacle_collision()
 		self.update_animation(delta_time)
@@ -128,10 +128,10 @@ class NPC(GameObject):
 		param delta_time: FPS
 		'''
 		if self._direction.x == 0 and self._direction.y == 0:
-			self.animation.set_images(Assets.frog.idle_sequence(self.sprite_angle), reset=False)
+			self._animation.set_images(Assets.frog.idle_sequence(self.sprite_angle), reset=False)
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self._direction)
-			self.animation.set_images(Assets.frog.move_squence(self.sprite_angle), reset=False)
+			self._animation.set_images(Assets.frog.move_squence(self.sprite_angle), reset=False)
 
-		self.animation.update(delta_time)
+		self._animation.update(delta_time)
 	

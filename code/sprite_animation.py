@@ -21,7 +21,7 @@ class SpriteAnimation():
 		update the animation after delta_time
 		param delta_time: FPS
 		'''
-		self._current_frame += self.animation_speed * delta_time
+		self._current_frame += self._animation_speed * delta_time
 
 		length = len(self._images)
 		if self.current_frame >= length:

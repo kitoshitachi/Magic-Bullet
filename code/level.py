@@ -76,12 +76,16 @@ class Level:
 		return self.__group_player
 	@property
 	def group_NPC(self):
-		return self.__group_obstacle
+		return self.__group_NPC
 
 	@property
 	def obstacles_and_boundary(self):
 		'''get obstacle and boundary group'''
 		return itertools.chain(self.__group_obstacle, self.__group_boundary)
+
+	@property
+	def obstacles_and_bullets(self):
+		return itertools.chain(self.__group_bullet, self.__group_obstacle)
 
 	def create_player(self):
 		'''create random sample position spawn of players'''

@@ -13,7 +13,7 @@ class SmokeEffect(GameObject):
 		param level: take group sprite
 		'''
 		super().__init__(level, [level.group_visible], Assets.smoke_effect[0], pos=pos)
-		self.animation = SpriteAnimation(self, Assets.smoke_effect, loop=False)
+		self._animation = SpriteAnimation(self, Assets.smoke_effect, loop=False)
 
 		SmokeEffect.FIRE_SFX.play();
 
@@ -23,7 +23,7 @@ class SmokeEffect(GameObject):
 		param delta_time: FPS
 		'''
 		super().update(delta_time)
-		self.animation.update(delta_time)
+		self._animation.update(delta_time)
 
-		if self.animation.is_ended:
+		if self._animation.is_ended:
 			self.kill()

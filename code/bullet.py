@@ -1,4 +1,3 @@
-import itertools
 import pygame
 from assets import Assets
 from settings import *
@@ -65,8 +64,7 @@ class Bullet(GameObject):
 						self.owner.stunted()
 						bullet.kill()
 
-		obstacles_and_bullets = itertools.chain(self._level.group_bullet, self._level.group_obstacle)
-		CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
+		CollisionEngine.detect_multiple(self, self._level.obstacles_and_bullets, response)
 		self._direction = self._vel.normalize()
 
 	def player_collision(self):
