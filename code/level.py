@@ -7,6 +7,7 @@ from game_over import GameOver
 from settings import *
 from map import Map
 from player import Player1, Player2
+import itertools
 
 class Level:
 	def __init__(self, map_name, on_main_menu):
@@ -17,16 +18,16 @@ class Level:
 		self.display_surface = pygame.display.get_surface()
 
 		# sprite group setup
-		self.map = Map(map_name)
-		self.group_all = pygame.sprite.Group()
-		self.group_visible = pygame.sprite.Group()
-		self.group_obstacle = pygame.sprite.Group()
-		self.group_boundary = pygame.sprite.Group()
-		self.group_bullet = pygame.sprite.Group()
-		self.group_player = pygame.sprite.Group()
-		self.group_NPC = pygame.sprite.Group()
-		self.camera_left = Camera(self.map.size, (SCREEN_WIDTH/2, SCREEN_HEIGHT))
-		self.camera_right = Camera(self.map.size, (SCREEN_WIDTH/2, SCREEN_HEIGHT))
+		self.__map = Map(map_name)
+		self.__group_all = pygame.sprite.Group()
+		self.__group_visible = pygame.sprite.Group()
+		self.__group_obstacle = pygame.sprite.Group()
+		self.__group_boundary = pygame.sprite.Group()
+		self.__group_bullet = pygame.sprite.Group()
+		self.__group_player = pygame.sprite.Group()
+		self.__group_NPC = pygame.sprite.Group()
+		self.camera_left = Camera(self.__map.size, (SCREEN_WIDTH/2, SCREEN_HEIGHT))
+		self.camera_right = Camera(self.__map.size, (SCREEN_WIDTH/2, SCREEN_HEIGHT))
 		self.cameras = [self.camera_left, self.camera_right]
 
 		# sprite setup
@@ -37,7 +38,7 @@ class Level:
 		# others
 		self.draw_debug = False
 		self.create_NPC_clock = Countdown(CREATE_NPC_DURATION)
-		self.map.init_objects(self)
+		self.__map.init_objects(self)
 
 		self.on_main_menu = on_main_menu
 		# others
@@ -50,14 +51,46 @@ class Level:
 		pygame.mixer.music.load(AUDIO_PATH + "MusMus QUEST - 塔 -.mp3")
 		pygame.mixer.music.play(-1)
 
+	@property
+	def group_all(self):
+		return self.__group_all
+
+	@property
+	def group_visible(self):
+		return self.__group_visible
+
+	@property
+	def group_obstacle(self):
+		return self.__group_obstacle
+
+	@property
+	def group_boundary(self):
+		return self.__group_boundary
+
+	@property
+	def group_bullet(self):
+		return self.__group_bullet
+
+	@property
+	def group_player(self):
+		return self.__group_player
+	@property
+	def group_NPC(self):
+		return self.__group_obstacle
+
+	@property
+	def obstacles_and_boundary(self):
+		'''get obstacle and boundary group'''
+		return itertools.chain(self.__group_obstacle, self.__group_boundary)
+
 	def create_player(self):
 		'''create random sample position spawn of players'''
-		position = random.sample(self.map.spawn_points,2)
+		position = random.sample(self.__map.spawn_points,2)
 		return (Player1(position[0], self), Player2(position[1], self))
 
 	def create_NPC(self):
 		'''create the npc, use random choice'''
-		NPC(random.choice(self.map.spawn_points),self)
+		NPC(random.choice(self.__map.spawn_points),self)
 		self.createNPC_time = pygame.time.get_ticks()
 
 	def cooldown_create_NPC(self):
@@ -79,7 +112,7 @@ class Level:
 
 		self.cooldown_create_NPC()
 
-		game_objs = sorted(self.group_visible.sprites(), key=lambda sprite: sprite.hitbox.centery)
+		game_objs = sorted(self.__group_visible.sprites(), key=lambda sprite: sprite.hitbox.centery)
 		for game_obj in game_objs:
 			game_obj.before_update(delta_time)
 			game_obj.update(delta_time)
@@ -90,7 +123,7 @@ class Level:
 		self.camera_right.update(self.players[1])
 			
 		for camera in self.cameras:
-			camera.surface.blit(self.map.ground_layer, camera.apply_rect(self.map.ground_layer.get_rect()))
+			camera.surface.blit(self.__map.ground_layer, camera.apply_rect(self.__map.ground_layer.get_rect()))
 
 		for game_obj in game_objs:
 			for camera in self.cameras:
@@ -106,7 +139,7 @@ class Level:
 		# 	self.draw_debug = not self.draw_debug
 
 		# if self.draw_debug:
-		# 	for game_obj in self.group_all.sprites():
+		# 	for game_obj in self.__group_all.sprites():
 		# 		for camera in self.cameras:
 		# 			pygame.draw.rect(camera.surface, CYAN, camera.apply_rect(game_obj.hitbox), 1)
 
@@ -140,8 +173,8 @@ class Level:
 		self.display_surface.blit(self.camera_left.surface, (0, 0))
 		self.display_surface.blit(self.camera_right.surface, (SCREEN_WIDTH/2, 0))
 
-		if self.game_over_menu is None and len(self.group_player) <= 1:
-			if len(self.group_player) == 0 or isinstance(self.group_player.sprites()[0], Player1):
+		if self.game_over_menu is None and len(self.__group_player) <= 1:
+			if len(self.__group_player) == 0 or isinstance(self.__group_player.sprites()[0], Player1):
 				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, 1)
 			else:
 				self.game_over_menu = GameOver(self.on_main_menu, self.display_surface, 2)

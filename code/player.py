@@ -35,20 +35,16 @@ class Player(GameObject):
 			group=[level.group_visible, level.group_player],
 	  		hitbox_inflation=(-6, -32),
 			pos=pos,
-			direction=pygame.math.Vector2(0, 0),
+			_direction=pygame.math.Vector2(0, 0),
 			speed=PLAYER_SPEED
 		)
-		self.hitbox.center = (self.rect.centerx, self.rect.centery + 14)
+		self._hitbox.center = (self._rect.centerx, self._rect.centery + 14)
 		self.mp = PLAYER_MANA
 		self.stamina = PLAYER_STAMINA
 		
 		self.attack_timer = Countdown(ATTACK_COOLDOWN)
 		self.regen_timer = Countdown(REGEN_COOLDOWN)
 		self.stunt_timer = Countdown(STUNT_DURATION)
-
-		self.group_visible = level.group_visible
-		self.group_obstacle = level.group_obstacle
-		self.group_bullet = level.group_bullet
 
 		self.key_settings = key_settings
 		#movement
@@ -57,9 +53,9 @@ class Player(GameObject):
 		self.player_asset = player_asset
 		self.animation = SpriteAnimation(self, self.player_asset.down_idle, 8)
 		self.sprite_angle = 90
-		self.circle_rect = Assets.circle.get_rect(center=self.rect.center)
+		self.circle_rect = Assets.circle.get_rect(center=self._rect.center)
 		self.arrow_img = Assets.arrow
-		self.arrow_rect = Assets.arrow.get_rect(center=self.rect.center)
+		self.arrow_rect = Assets.arrow.get_rect(center=self._rect.center)
 		self.arrow_push_vector = pygame.math.Vector2(self.circle_rect.width // 2, 0)
 
 	def input(self):
@@ -75,27 +71,27 @@ class Player(GameObject):
 			self.rot_direction = 0
 
 		if keys_press[ks.up]:
-			self.direction.y = -1
+			self._direction.y = -1
 		elif keys_press[ks.down]:
-			self.direction.y = 1
+			self._direction.y = 1
 		else:
-			self.direction.y = 0
+			self._direction.y = 0
 
 		if keys_press[ks.run] and self.stamina >= 60:
-			self.speed = PLAYER_SPEED * 1.6
+			self._speed = PLAYER_SPEED * 1.6
 			self.stamina -= 60
 		else:
-			self.speed = PLAYER_SPEED
+			self._speed = PLAYER_SPEED
 
 		if keys_press[ks.right]:
-			self.direction.x = 1
+			self._direction.x = 1
 		elif keys_press[ks.left]:
-			self.direction.x = -1
+			self._direction.x = -1
 		else:
-			self.direction.x = 0
+			self._direction.x = 0
 
-		if self.direction.magnitude() != 0:
-			self.direction.normalize_ip()
+		if self._direction.magnitude() != 0:
+			self._direction.normalize_ip()
 		
 		if self.attack_timer.is_done and self.mp >= 20:    
 			if keys_press[ks.shoot]:
@@ -104,22 +100,21 @@ class Player(GameObject):
 	def shoot(self):
 		'''take a shoot'''
 		self.mp -= 20
-		Bullet(self,self.level)
+		Bullet(self,self._level)
 		self.attack_timer.reset()
 	def handle_collision(self):
 		'''check collision sweet AABB, respone slide'''
-		obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
-		CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
+		CollisionEngine.detect_multiple(self, self._level.obstacles_and_boundary, CollisionResponse.slide)
 	
 	def stunted(self):
 		'''stunt player'''
 		self.stunt_timer.reset()
-		self.direction.x, self.direction.y = 0, 0
+		self._direction.x, self._direction.y = 0, 0
 		self.rot_direction = 0
 
 	def npc_collision(self):
 		'''handle collision npc'''
-		hits = pygame.sprite.spritecollide(self,self.level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
+		hits = pygame.sprite.spritecollide(self,self._level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
 		for npc in hits:
 			mana = 20/FPS
 			if self.mp < mana:
@@ -151,13 +146,13 @@ class Player(GameObject):
 
 	def update_animation(self, delta_time):
 		'''update animation at this FPS'''
-		if self.direction.x == 0 and self.direction.y == 0:
+		if self._direction.x == 0 and self._direction.y == 0:
 			self.animation.set_images(self.player_asset.idle_sequence(self.angle), reset=False)
-			self.animation.set_animation_speed = 1
+			self.animation.animation_speed = 1
 		else:
-			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
+			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self._direction)
 			self.animation.set_images(self.player_asset.move_squence(self.angle), reset=False)
-			self.animation.set_animation_speed = 8
+			self.animation.animation_speed = 8
 
 		self.animation.update(delta_time)
 
@@ -168,12 +163,12 @@ class Player(GameObject):
 	def after_update(self):
 		'''update the arrow'''
 		super().after_update()
-		self.circle_rect.center = self.rect.center
+		self.circle_rect.center = self._rect.center
 
 		self.arrow_push_vector = pygame.Vector2(self.circle_rect.width // 2, 0).rotate(self.angle)
 		self.arrow_img = pygame.transform.rotate(Assets.arrow, -self.angle)
 
-		self.arrow_rect.center = self.rect.center
+		self.arrow_rect.center = self._rect.center
 		self.arrow_rect.x += self.arrow_push_vector.x
 		self.arrow_rect.y += self.arrow_push_vector.y
 

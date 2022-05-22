@@ -24,14 +24,14 @@ class Bullet(GameObject):
 		image=Assets.bullet_img,
 		hitbox_inflation=(-16, -16),
 		pos=player.hitbox.topleft,
-		direction=pygame.math.Vector2(1, 0).rotate(player.angle),
+		_direction=pygame.math.Vector2(1, 0).rotate(player.angle),
 		speed=500)
 
 		self.time_to_live = BULLET_MAX_TIME_TO_LIVE
 		
 		# đạn nằm ở giữa hitbox người bắn
-		self.rect.center = player.hitbox.center
-		self.hitbox.center = player.hitbox.center
+		self._rect.center = player.hitbox.center
+		self._hitbox.center = player.hitbox.center
 
 		Bullet.FIRE_SFX.play()
 
@@ -47,17 +47,17 @@ class Bullet(GameObject):
 			if self.time_to_live <= 0:
 				self.kill()
 			
-			smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2), 
-						self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
+			smoke_pos = (self._hitbox.centerx + Utils.round_away_from_zero(self._vel.x * time) - (TILESIZE / 2), 
+						self._hitbox.centery + Utils.round_away_from_zero(self._vel.y * time) - (TILESIZE / 2))
 
-			SmokeEffect(smoke_pos, self.level)
+			SmokeEffect(smoke_pos, self._level)
 
 			CollisionResponse.deflect(collison_data)
 			
 			# đảo chiểu của viên đạn còn lại
 			if (isinstance(obstacle, Bullet)):
 				other_bullet: Bullet = obstacle
-				other_bullet.direction.reflect_ip(normal * -1)
+				other_bullet._direction.reflect_ip(normal * -1)
 				other_bullet.time_to_live -= 1
 
 				for bullet in [self, other_bullet]:
@@ -65,9 +65,9 @@ class Bullet(GameObject):
 						self.owner.stunted()
 						bullet.kill()
 
-		obstacles_and_bullets = itertools.chain(self.level.group_bullet, self.level.group_obstacle)
+		obstacles_and_bullets = itertools.chain(self._level.group_bullet, self._level.group_obstacle)
 		CollisionEngine.detect_multiple(self, obstacles_and_bullets, response)
-		self.direction = self.vel.normalize()
+		self._direction = self._vel.normalize()
 
 	def player_collision(self):
 		'''handle player collision'''
@@ -79,26 +79,26 @@ class Bullet(GameObject):
 			else:
 				player.kill()
 
-			smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
-						self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
-			SmokeEffect(smoke_pos, self.level)
+			smoke_pos = (self._hitbox.centerx + Utils.round_away_from_zero(self._vel.x * time) - (TILESIZE / 2),
+						self._hitbox.centery + Utils.round_away_from_zero(self._vel.y * time) - (TILESIZE / 2))
+			SmokeEffect(smoke_pos, self._level)
 
 			self.kill()
 
-		CollisionEngine.detect_multiple(self, self.level.group_player, response)
+		CollisionEngine.detect_multiple(self, self._level.group_player, response)
 
 	def npc_collision(self):
 		'''handle npc collision'''
 		def response(collison_data):
 			time, _, _, npc = collison_data
-			smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
-							self.hitbox.centery + Utils.round_away_from_zero(self.vel.y * time) - (TILESIZE / 2))
-			SmokeEffect(smoke_pos, self.level)
+			smoke_pos = (self._hitbox.centerx + Utils.round_away_from_zero(self._vel.x * time) - (TILESIZE / 2),
+							self._hitbox.centery + Utils.round_away_from_zero(self._vel.y * time) - (TILESIZE / 2))
+			SmokeEffect(smoke_pos, self._level)
 
 			self.owner.mp += npc.hit()
 			self.kill()
 
-		CollisionEngine.detect_multiple(self, self.level.group_NPC, response)
+		CollisionEngine.detect_multiple(self, self._level.group_NPC, response)
 
 	def update(self, delta_time):
 		'''update bullet after FPS

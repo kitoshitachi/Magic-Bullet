@@ -12,5 +12,5 @@ class Wall(GameObject):
 		'''
 		super().__init__([level.group_obstacle])
 
-		self.rect = pygame.Rect(pos[0], pos[1], TILESIZE, TILESIZE)
-		self.hitbox = self.rect.inflate(0, -5)
+		self._rect = pygame.Rect(pos[0], pos[1], TILESIZE, TILESIZE)
+		self._hitbox = self._rect.inflate(0, -5)

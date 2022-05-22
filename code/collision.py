@@ -147,8 +147,8 @@ class CollisionResponse:
         param collsion_data: data when collide from check sweet AABB
         stop the moving object'''
         time, _, who, _ = collision_data
-        who.vel.x = Utils.round_away_from_zero(who.vel.x * time)
-        who.vel.y = Utils.round_away_from_zero(who.vel.y * time)
+        who._vel.x = Utils.round_away_from_zero(who.vel.x * time)
+        who._vel.y = Utils.round_away_from_zero(who.vel.y * time)
 
     @staticmethod
     def slide(collision_data):
@@ -156,14 +156,14 @@ class CollisionResponse:
         param collsion_data: data when collide from check sweet AABB
         slide the moving object'''
         time, normal, who, _ = collision_data
-        prev_vel = who.vel.copy()
+        prev_vel = who._vel.copy()
 
         CollisionResponse.stop(collision_data)
 
         remaining_time = 1 - time
         dot_prod = prev_vel.x * normal.y + prev_vel.y * normal.x
-        who.vel.x += dot_prod * normal.y * remaining_time
-        who.vel.y += dot_prod * normal.x * remaining_time
+        who._vel.x += dot_prod * normal.y * remaining_time
+        who._vel.y += dot_prod * normal.x * remaining_time
 
     @staticmethod
     def deflect(collision_data):
@@ -173,8 +173,8 @@ class CollisionResponse:
         time, normal, who, _ = collision_data
 
         remaining_time = 1 - time
-        reflected_vel = (who.vel * remaining_time).reflect(normal)
+        reflected_vel = (who._vel * remaining_time).reflect(normal)
         
         CollisionResponse.stop(collision_data)
-        who.vel = reflected_vel
+        who._vel = reflected_vel
 

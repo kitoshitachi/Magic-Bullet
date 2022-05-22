@@ -12,8 +12,8 @@ class Obstacle(GameObject):
 		super().__init__(level=level, group=[level.group_visible, level.group_obstacle])
 
 		self.image = image
-		self.rect = pygame.Rect(pos[0], pos[1], area[2], area[3])
-		self.hitbox = hitbox
+		self._rect = pygame.Rect(pos[0], pos[1], area[2], area[3])
+		self._hitbox = hitbox
 		self.area = area
 
 	def render(self, camera):

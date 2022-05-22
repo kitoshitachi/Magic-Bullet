@@ -11,8 +11,8 @@ class Boundary(GameObject):
 		'''
 		super().__init__(level, group=[level.group_boundary])
 
-		self.rect = hitbox.copy()
-		self.hitbox = hitbox
+		self._rect = hitbox.copy()
+		self._hitbox = hitbox
 
 	def render(self, offset):
 		pass
