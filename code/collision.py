@@ -1,20 +1,25 @@
-
-from cmath import isclose
-from math import inf
-
+from math import inf,isclose
 from pygame import Rect, Vector2
 from settings import COLLISION_DETECTION_RADIUS
 from utils import Utils
-
 from game_object import GameObject
 
 
 # https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/
 class CollisionEngine:
-
-    # Kiểm tra va chạm nhiều object cùng lúc, sắp xếp dựa trên dộ gần với moving_object
+    '''class to check collsion'''
     @staticmethod
     def detect_multiple(moving_object: GameObject, others, response = None):
+        '''Kiểm tra va chạm nhiều object cùng lúc, sắp xếp dựa trên dộ gần với moving_object
+        param moving object: the object is moving
+        param other: the sprite of game, can be moving object or static object
+        param respone: default is None, stop when collided
+                       respone = slide, slide moving object when collide
+                       respone = deflect, deflect the sprites when collide
+                       
+        return  list data when collided
+        the data is [time, vector normalize, game object, other]
+        '''
         closest_to_moving_object = lambda obj: Vector2(obj.hitbox.center).distance_to(Vector2(moving_object.hitbox.center))
         
         def not_too_far_away(obj): 
@@ -27,7 +32,9 @@ class CollisionEngine:
 
     @staticmethod
     def detect(moving_object: GameObject, static_object: GameObject, response = None):
-        '''return time, normal, who, other'''
+        '''
+        kiểm tra va chạm của 1 moving object and static object, sau đó respone và trả về dữ liệu
+        return time,vector normalize, who, other'''
 
         bbox = CollisionEngine._get_swept_broadphase_box(moving_object, static_object)
         if CollisionEngine._AABB_check(bbox, static_object.hitbox.copy()):
@@ -42,6 +49,10 @@ class CollisionEngine:
 
     @staticmethod
     def _get_swept_broadphase_box(m_object:GameObject, s_object:GameObject):
+        '''quick check but the accuracy isnt 100%
+        param m_object: moving object
+        param s_object: static object
+        '''
         r = Utils.round_away_from_zero
         new_Box = Rect(0,0,0,0)
         new_Box.left = r(m_object.hitbox.left if m_object.vel.x >0 else m_object.hitbox.left + m_object.vel.x - s_object.vel.x)
@@ -51,7 +62,13 @@ class CollisionEngine:
         return new_Box.copy()
 
     @staticmethod
-    def _AABB_check(mb: Rect, sb: Rect) -> bool:
+    def _AABB_check(mb: Rect, sb: Rect):
+        '''
+        check collide with AABB
+        param mb: get rect of moving object
+        param sb: get rect of static object
+        return True if collided else False
+        '''
         return not (mb.left + mb.width <= sb.left 
                     or mb.left >= sb.left + sb.width 
                     or mb.top + mb.height <= sb.top 
@@ -59,7 +76,11 @@ class CollisionEngine:
 
     @staticmethod
     def _swept_AABB(moving_object:GameObject, static_object:GameObject):
-        '''return time, normal, who, other'''
+        '''
+        param moving object: the object is moving
+        param static_object: the object is not moving, but can be moving object
+
+        return time, normal, who, other'''
         cur_mb_vel = moving_object.vel - static_object.vel
         sb = static_object.hitbox.copy()
         mb = moving_object.hitbox.copy()
@@ -119,14 +140,21 @@ class CollisionEngine:
 
     
 class CollisionResponse:
+    '''class respone when collided'''
     @staticmethod
     def stop(collision_data):
+        '''
+        param collsion_data: data when collide from check sweet AABB
+        stop the moving object'''
         time, _, who, _ = collision_data
         who.vel.x = Utils.round_away_from_zero(who.vel.x * time)
         who.vel.y = Utils.round_away_from_zero(who.vel.y * time)
 
     @staticmethod
     def slide(collision_data):
+        '''
+        param collsion_data: data when collide from check sweet AABB
+        slide the moving object'''
         time, normal, who, _ = collision_data
         prev_vel = who.vel.copy()
 
@@ -139,6 +167,9 @@ class CollisionResponse:
 
     @staticmethod
     def deflect(collision_data):
+        '''
+        param collsion_data: data when collide from check sweet AABB
+        reflect moving object'''
         time, normal, who, _ = collision_data
 
         remaining_time = 1 - time
