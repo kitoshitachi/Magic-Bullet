@@ -8,8 +8,10 @@ from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
 from settings import *
+
 @dataclass
 class KeySettings:
+	'''make class save setting keyboard'''
 	left: int
 	right: int
 	up: int
@@ -20,7 +22,14 @@ class KeySettings:
 	run:int
 
 class Player(GameObject):
-	def __init__(self, pos, level, key_settings:KeySettings, player_asset: MovingImages):		
+	def __init__(self, pos, level, key_settings:KeySettings, player_asset: MovingImages):	
+		'''
+		make player
+		param pos: start pos
+		param level: get attribute level
+		keysetting: the setting of player
+		player_asset: get all assets of player
+		'''	
 		super().__init__(
 			level=level,
 			group=[level.group_visible, level.group_player],
@@ -54,6 +63,7 @@ class Player(GameObject):
 		self.arrow_push_vector = pygame.math.Vector2(self.circle_rect.width // 2, 0)
 
 	def input(self):
+		'''handle input'''
 		ks = self.key_settings
 		keys_press = pygame.key.get_pressed()
 		
@@ -92,19 +102,23 @@ class Player(GameObject):
 				self.shoot()	
 				
 	def shoot(self):
+		'''take a shoot'''
 		self.mp -= 20
 		Bullet(self,self.level)
 		self.attack_timer.reset()
 	def handle_collision(self):
+		'''check collision sweet AABB, respone slide'''
 		obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
 		CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
 	
 	def stunted(self):
+		'''stunt player'''
 		self.stunt_timer.reset()
 		self.direction.x, self.direction.y = 0, 0
 		self.rot_direction = 0
 
 	def npc_collision(self):
+		'''handle collision npc'''
 		hits = pygame.sprite.spritecollide(self,self.level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
 		for npc in hits:
 			mana = 20/FPS
@@ -116,6 +130,7 @@ class Player(GameObject):
 				npc.mp += mana
 
 	def update(self, delta_time):
+		'''update player at this FPS'''
 		if self.stunt_timer.is_done:
 			self.input()	
 		if self.regen_timer.is_done and self.mp < PLAYER_MANA:
@@ -135,6 +150,7 @@ class Player(GameObject):
 		
 
 	def update_animation(self, delta_time):
+		'''update animation at this FPS'''
 		if self.direction.x == 0 and self.direction.y == 0:
 			self.animation.set_images(self.player_asset.idle_sequence(self.angle), reset=False)
 			self.animation.set_animation_speed = 1
@@ -146,9 +162,11 @@ class Player(GameObject):
 		self.animation.update(delta_time)
 
 	def update_rotation(self, delta_time):
+		'''update angle of player at this FPS'''
 		self.angle = (self.angle + self.rot_direction * PLAYER_ROT_SPEED * delta_time) % 360
 
 	def after_update(self):
+		'''update the arrow'''
 		super().after_update()
 		self.circle_rect.center = self.rect.center
 
@@ -161,25 +179,24 @@ class Player(GameObject):
 
 
 	def render(self, camera):
+		'''
+		render player in camera
+		param camera: the camera of player
+		'''
 		super().render(camera)
 		camera.surface.blit(Assets.circle, camera.apply_rect(self.circle_rect))
 		camera.surface.blit(self.arrow_img, camera.apply_rect(self.arrow_rect))
 
-@dataclass
-class KeySettings:
-	left: int
-	right: int
-	up: int
-	down: int
-	rotate_left: int
-	rotate_right: int
-	shoot: int
-	run: int
-
 class Player1(Player):
+	'''
+	subclass to make player 1 difference keysetting
+	'''
 	def __init__(self, pos, level):
 		super().__init__(pos, level, KeySettings(pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, pygame.K_g, pygame.K_j, pygame.K_h,pygame.K_LSHIFT), Assets.player1)
 
 class Player2(Player):
+	'''
+	subclass to make player 1 difference keysetting
+	'''
 	def __init__(self, pos, level):
 		super().__init__(pos, level, KeySettings(pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, pygame.K_i, pygame.K_p, pygame.K_o,pygame.K_u), Assets.player2)
