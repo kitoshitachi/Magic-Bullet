@@ -153,11 +153,11 @@ class Player(GameObject):
 		'''update animation at this FPS'''
 		if self.direction.x == 0 and self.direction.y == 0:
 			self.animation.set_images(self.player_asset.idle_sequence(self.angle), reset=False)
-			self.animation.set_animation_speed = 1
+			self.animation.animation_speed = 1
 		else:
 			self.sprite_angle = pygame.Vector2(1, 0).angle_to(self.direction)
 			self.animation.set_images(self.player_asset.move_squence(self.angle), reset=False)
-			self.animation.set_animation_speed = 8
+			self.animation.animation_speed = 8
 
 		self.animation.update(delta_time)
 

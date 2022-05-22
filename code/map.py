@@ -9,6 +9,10 @@ import pygame
 
 class Map:
 	def __init__(self, map_name):
+		'''
+		contains map information parsed from tmx file
+		param map_name: name of map to parse information
+		'''
 		self.path = f'map/{map_name}.json'
 
 		with open(self.path) as f:
@@ -28,33 +32,33 @@ class Map:
 		return self._width
 
 	@property
-	def width(self):
+	def height(self):
 		return self._height
 
 	@property
 	def size(self):
-		'''return (width, height)'''
+		'''return map size in (width, height)'''
 		return (self._width,self._height)
-
-
 
 	@property
 	def ground_layer(self):
-		'''return surface ground layer'''
+		'''return image of ground layers'''
 		return self._ground_layer
 	
 	property
 	def obstacle_layer(self):
-		'''return surface obstacle layer'''
+		'''return image obstacle_sprite layers'''
 		return self._obstacle_layer
 
 	@property
 	def spawn_points(self):
-		'''return tuple position , player can spawn in them'''
+		'''return spawn points'''
 		return self._spawn_points
 
 	def _get_tile(self, tile_gid):
-		'''return tileset, area'''
+		'''
+		returns tile information from tile_gid (tileset, area of the tile in the tileset)
+		'''
 		tileset = self._tilesets[-1]
 		id_offset = self._tileset_firstgids[-1]
 
@@ -71,7 +75,8 @@ class Map:
 
 	def _create_layer(self,layer_name):
 		'''
-		parameter layer_name: the name of layer
+		create an image from a given layer name
+		parameter layer_name: layer contains this name will be render to the image
 		return surface
 		'''
 		image = pygame.Surface((self._width, self._height), pygame.SRCALPHA)
@@ -89,12 +94,14 @@ class Map:
 
 
 	def init_objects(self, level):
-		''''''
+		'''
+		create game objects from object layers inside tmx file and put them into level groups
+		'''
 		for object_layer in filter(lambda layer: "object" in layer["name"], self._map_layers):
 			layer_name = object_layer["name"]
 
 			for chunk in object_layer["chunks"]:
-				tile_ids, h, w, offset_x, offset_y,  = chunk.values()
+				tile_ids, h, w, _, _,  = chunk.values()
 				check_arr_tall = [False] * w * h
 				check_arr_small = [False] * w * h
 				check_arr_boundary = [False] * w * h
@@ -105,45 +112,61 @@ class Map:
 						y = floor(index / w)
 
 						if "small" in layer_name and not check_arr_small[x + y * w]:
-							self._create_obstacle_small((x, y), (offset_x, offset_y), level, chunk, check_arr_small)
+							self._create_obstacle_small((x, y), level, chunk, check_arr_small)
 						elif "tall" in layer_name and not check_arr_tall[x + y * w]:
-							self._create_obstacle_tall((x, y), (offset_x, offset_y), level, chunk, check_arr_tall)
+							self._create_obstacle_tall((x, y), level, chunk, check_arr_tall)
 						elif "boundary" in layer_name and not check_arr_boundary[x + y * w]:
-							self._create_boundary((x, y), (offset_x, offset_y), level, chunk, check_arr_boundary)
+							self._create_boundary((x, y), level, chunk, check_arr_boundary)
 
-	def _create_obstacle_small(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
-		x, y = tile_pos
-		pos_x, pos_y = self._calculate_postion(tile_pos, tile_offset_pos)
-		
-		area = self._get_area(x, y, chunk, check_arr)
+	def _calculate_game_object_data(self, tile_pos, chunk, check_arr):
+		'''
+		calculate relavent data for game object from given chunk
+		param tile_pos: tile position (in tiles)
+		param chunk: tmx chunk which contains gid of tile 
+		param check_arr: flag list needed for finding optimal rect area for game object
+		'''
+		area = self._get_area(tile_pos, chunk, check_arr)
+		return (tile_pos[0] * TILESIZE, tile_pos[1] * TILESIZE), area
+
+	def _create_obstacle_small(self, tile_pos, level, chunk, check_arr):
+		'''
+		create game object that are small when display (where it's hitbox is equal it's rect) 
+		'''
+		pos, area = self._calculate_game_object_data(tile_pos, chunk, check_arr)
 		_, _, ow, oh = area
 		
-		hitbox = pygame.Rect(pos_x, pos_y, ow, oh)
-		Obstacle(self._obstacle_layer, area, (pos_x, pos_y), hitbox, level)
+		hitbox = pygame.Rect(*pos, ow, oh)
+		Obstacle(self._obstacle_layer, area, pos, hitbox, level)
 
-	def _create_obstacle_tall(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
-		x, y = tile_pos
-		pos_x, pos_y = self._calculate_postion(tile_pos, tile_offset_pos)
-
-		area = self._get_area(x, y, chunk, check_arr)
+	def _create_obstacle_tall(self, tile_pos, level, chunk, check_arr):
+		'''
+		create game object that are tall when display (where it's hitbox is at the bottom part of the rect) 
+		'''
+		pos, area = self._calculate_game_object_data(tile_pos, chunk, check_arr)
+		x, y = pos
 		_, _, ow, oh = area
 
-		hitbox = pygame.Rect(pos_x, pos_y + oh - TILESIZE, ow, TILESIZE)
-		Obstacle(self._obstacle_layer, area, (pos_x, pos_y), hitbox, level)
+		hitbox = pygame.Rect(x, y + oh - TILESIZE, ow, TILESIZE)
+		Obstacle(self._obstacle_layer, area, pos, hitbox, level)
 
-	def _create_boundary(self, tile_pos, tile_offset_pos, level, chunk, check_arr):
-		x, y = tile_pos
-		pos_x, pos_y = self._calculate_postion(tile_pos, tile_offset_pos)
+	def _create_boundary(self, tile_pos, level, chunk, check_arr):
+		'''
+		create boundary object (players can't move pass but bullets can)
+		'''
+		pos, area = self._calculate_game_object_data(tile_pos, chunk, check_arr)
+		_, _, ow, oh = area
 
-		_, _, ow, oh = self._get_area(x, y, chunk, check_arr)
+		hitbox = pygame.Rect(*pos, ow, oh)
+		Boundary(pos, hitbox, level)
 
-		hitbox = pygame.Rect(pos_x, pos_y, ow, oh)
-		Boundary((pos_x, pos_y), hitbox, level)
-
-	def _calculate_postion(self, tile_pos, tile_offset_pos):
-		return ((tile_pos[0] + tile_offset_pos[0]) * TILESIZE, (tile_pos[1] + tile_offset_pos[1]) * TILESIZE)
-
-	def _get_area(self, left, top, chunk, check_arr):
+	def _get_area(self, pos, chunk, check_arr):
+		'''
+		get optimal area (in pixels) from given starting point
+		param pos: starting position
+		param chunk: tmx chunk which contains gid of tile 
+		param check_arr: flag list needed for finding optimal rect area
+		'''
+		left, top = pos
 		tile_ids, h, w, _, _,  = chunk.values()
 
 		current_gid = tile_ids[left + top * w]
@@ -193,7 +216,7 @@ class Map:
 		return (left * TILESIZE, top * TILESIZE, (right - left + 1) * TILESIZE, (bottom - top + 1) * TILESIZE)
 
 	def _create_spawn_points(self):
-		'''make the start points for player'''
+		'''create spawn points parsed from spawn_area layer, can be used to spawn game objects such as player, enemies'''
 		spawn_points = ()  
 		for layer in filter(lambda layer: "spawn_area" in layer["name"], self._map_layers):
 			for chunk in layer["chunks"]:
