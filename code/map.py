@@ -130,7 +130,7 @@ class Map:
 
 	def _create_obstacle_small(self, tile_pos, level, chunk, check_arr):
 		'''
-		create game object that are small when display (where it's hitbox is equal it's rect) 
+		create game object that are small when displayed (where it's hitbox is equal it's rect) 
 		'''
 		pos, area = self._calculate_game_object_data(tile_pos, chunk, check_arr)
 		_, _, ow, oh = area
@@ -140,7 +140,7 @@ class Map:
 
 	def _create_obstacle_tall(self, tile_pos, level, chunk, check_arr):
 		'''
-		create game object that are tall when display (where it's hitbox is at the bottom part of the rect) 
+		create game object that are tall when displayed (where it's hitbox is at the bottom part of the rect) 
 		'''
 		pos, area = self._calculate_game_object_data(tile_pos, chunk, check_arr)
 		x, y = pos
