@@ -6,8 +6,13 @@ from settings import *
 
 class GameOver:
 	def __init__(self, on_main_menu, surface, playerName):
-		self.pause_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-		self.screen_shot = None
+		'''
+		param on_main_menu: event handler
+		param surface: surface to draw menu
+		'''
+		self._pause_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+		self._screen_shot = None
+
 		button_color = pygame.Color(MENU_LIGHT_GREEN)
 		border_color = pygame.Color(MENU_DARK_GREEN)
 		selection_color = pygame.Color(MENU_BLUE)
@@ -26,7 +31,6 @@ class GameOver:
 
 		theme.title_offset = (130, SCREEN_HEIGHT/2 - 200)
 
-		menu = pygame_menu.Menu(f'Người chơi {playerName} {"(bên trái)" if playerName == 1 else "(bên phải)"} chiến thắng!', *surface.get_size(), theme=theme)
 
 		button_style = {
 			"background_color": button_color,
@@ -36,27 +40,29 @@ class GameOver:
 			"font_color": border_color,
 			"selection_color": selection_color,
 		}
+		self._menu = pygame_menu.Menu(f'Người chơi {playerName} {"(bên trái)" if playerName == 1 else "(bên phải)"} chiến thắng!', *surface.get_size(), theme=theme)
+		self._menu .add.image(IMAGE_PATH + ("menu/player1_win.png" if playerName == 1 else "menu/player2_win.png"), margin=(0, 10))
 
-		menu.add.image(IMAGE_PATH + ("menu/player1_win.png" if playerName == 1 else "menu/player2_win.png"), margin=(0, 10))
-		self.first_widget = menu.add.button('Về màn hình chính', on_main_menu, margin=(0, 30), **button_style)
-		menu.add.button('Thoát', pygame_menu.events.EXIT, **button_style)
+		self._first_widget = self._menu .add.button('Về màn hình chính', on_main_menu, margin=(0, 30), **button_style)
+		self._menu .add.button('Thoát', pygame_menu.events.EXIT, **button_style)
 
-
-		self.menu = menu
-		self.surface = surface
+		self._surface = pygame.display.get_surface()
 
 	def run(self, events):
-		self.menu.update(events)
+		self._menu.update(events)
 
-		self.pause_surface.fill(color=TRANSPARENT)
-		self.menu.draw(self.pause_surface)
+		self._pause_surface.fill(color=TRANSPARENT)
+		self._menu.draw(self._pause_surface)
 
-		self.surface.blit(self.screen_shot, (0, 0))
-		self.surface.blit(self.pause_surface, (0, 0))
+		self._surface.blit(self._screen_shot, (0, 0))
+		self._surface.blit(self._pause_surface, (0, 0))
+
+	def has_taken_screen_shot(self):
+		return self._screen_shot is not None
 
 	def take_screen_shot(self):
-		self.screen_shot = self.surface.copy()
+		self._screen_shot = self._surface.copy()
 
 	def reset(self):
-		self.menu.full_reset()
-		self.menu.select_widget(self.first_widget)
+		self._menu.full_reset()
+		self._menu.select_widget(self._first_widget)

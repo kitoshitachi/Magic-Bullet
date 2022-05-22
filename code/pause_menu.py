@@ -45,7 +45,6 @@ class PauseMenu:
 			"font_color": border_color,
 			"selection_color": selection_color,
 		}
-
 		self._first_widget = self._menu.add.button('Chơi', on_start_game, margin=(0, 30), **button_style)
 		self._menu.add.button('Về màn hình chính', on_main_menu, margin=(0, 30), **button_style)
 		self._menu.add.button('Thoát', pygame_menu.events.EXIT, **button_style)

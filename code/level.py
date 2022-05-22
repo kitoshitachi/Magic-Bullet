@@ -62,7 +62,7 @@ class Level:
 
 	def run(self, events, delta_time):
 		if not (self.game_over_menu is None) and self.game_over_timer.is_done:
-			if self.game_over_menu.screen_shot is not None:
+			if self.game_over_menu.has_taken_screen_shot():
 				self.game_over_menu.run(events)
 				return;
 
@@ -138,7 +138,7 @@ class Level:
 			self.game_over_timer.reset()
 
 		if not (self.game_over_menu is None) and self.game_over_timer.is_done:
-			if self.game_over_menu.screen_shot is None:
+			if not self.game_over_menu.has_taken_screen_shot():
 				self.game_over_menu.take_screen_shot()
 
 	@staticmethod
