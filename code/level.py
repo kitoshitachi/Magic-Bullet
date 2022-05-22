@@ -10,6 +10,9 @@ from player import Player1, Player2
 
 class Level:
 	def __init__(self, map_name, on_main_menu):
+		'''create level game
+		param map_name: the map player choose
+		param on_main_menu: the event take main menu'''
 		# get the display surface 
 		self.display_surface = pygame.display.get_surface()
 
@@ -33,7 +36,7 @@ class Level:
 		
 		# others
 		self.draw_debug = False
-		self.createNPC_time = 0
+		self.create_NPC_clock = Countdown(CREATE_NPC_DURATION)
 		self.map.init_objects(self)
 
 		self.on_main_menu = on_main_menu
@@ -48,19 +51,27 @@ class Level:
 		pygame.mixer.music.play(-1)
 
 	def create_player(self):
+		'''create random sample position spawn of players'''
 		position = random.sample(self.map.spawn_points,2)
 		return (Player1(position[0], self), Player2(position[1], self))
 
 	def create_NPC(self):
+		'''create the npc, use random choice'''
 		NPC(random.choice(self.map.spawn_points),self)
 		self.createNPC_time = pygame.time.get_ticks()
 
 	def cooldown_create_NPC(self):
-		current_time = pygame.time.get_ticks()
-		if NPC.Amount < 10 and current_time - self.createNPC_time >= CREATE_NPC_DURATION:
+		'''check cooldown create NPC'''
+		if NPC.Amount > 10 or self.create_NPC_clock.is_done:
+			pass
+		else:
 			self.create_NPC()
 
 	def run(self, events, delta_time):
+		'''run the level , handle event
+		param events: the event from game
+		param delta_time: FPS 
+		'''
 		if not (self.game_over_menu is None) and self.game_over_timer.is_done:
 			if self.game_over_menu.has_taken_screen_shot():
 				self.game_over_menu.run(events)
@@ -143,6 +154,10 @@ class Level:
 
 	@staticmethod
 	def draw_bar(surf, bar:pygame.Rect , pct, color = CYAN):
+		'''draw the bar
+		param surf: surface to draw bar
+		param pct: percentage of bar
+		param color: default is CYAN'''
 		if pct < 0:
 			pct = 0
 		fill_rect = bar.copy()
