@@ -7,7 +7,6 @@ from collision import CollisionEngine, CollisionResponse
 from game_object import GameObject
 from utils import Utils
 from settings import BULLET_MAX_TIME_TO_LIVE
-from debug import debug
 
 class Bullet(GameObject):
 	FIRE_SFX = pygame.mixer.Sound(AUDIO_PATH + 'bullet_fire.wav')
