@@ -11,6 +11,10 @@ from game_object import GameObject
 class NPC(GameObject):
 	Amount = 0
 	def __init__(self, pos, level):
+		'''create the NPC of game
+		param pos: the start position of NPC
+		param level: take the attribute of level
+		'''
 		NPC.Amount += 1
 		super().__init__(
 			level=level,
@@ -34,16 +38,23 @@ class NPC(GameObject):
 		self.angle = 0
 		self.player = None
 	def obstacle_collision(self):
+		'''
+		handle collsion obstacle
+		'''
 		obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
 		CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
 
 	def has_wall_on_sight(self,line):
+		'''check wall on sigh
+		param line: the line between player and npc
+		return True if has wall on sight else False'''
 		for wall in self.level.group_obstacle:
 			if len(pygame.Rect.clipline(wall.rect,line)) > 0:
 				return True
 		return False
 
 	def target(self):
+		'''get the player on sight'''
 		d_min = SCREEN_WIDTH
 		for player in self.level.group_player:
 			dist = Utils.distance(self.rect.center,player.rect.center)
@@ -55,6 +66,7 @@ class NPC(GameObject):
 				d_min = dist
 
 	def hit(self):
+		'''take hit'''
 		self.time_to_live -= 1
 
 		if self.time_to_live <= 0:
@@ -63,6 +75,7 @@ class NPC(GameObject):
 			return 0
 
 	def random_move(self):
+		'''random moving npc'''
 		if self.step >= self.max_step:
 			self.step = 0
 			self.max_step = randint(40,60)
@@ -76,6 +89,7 @@ class NPC(GameObject):
 			self.animation.set_images(Assets.frog.move_squence(self.angle))
 
 	def avoid_mobs(self):
+		'''avoid mobs around'''
 		for NPC in self.level.group_NPC:
 			if NPC != self:
 				dist = Utils.distance(self.rect.center,NPC.rect.center)
@@ -83,6 +97,8 @@ class NPC(GameObject):
 					self.direction += pygame.Vector2(dist).normalize()
 
 	def update(self, delta_time):
+		'''update npc at this FPS
+		param delta_time: FPS'''
 		self.target()
 		if self.player is None: #or self.player.mp < 10:
 			self.random_move()
@@ -108,6 +124,10 @@ class NPC(GameObject):
 			NPC.Amount -= 1
 
 	def update_animation(self, delta_time):
+		'''
+		update the animation of NPC at this FPS
+		param delta_time: FPS
+		'''
 		if self.direction.x == 0 and self.direction.y == 0:
 			self.animation.set_images(Assets.frog.idle_sequence(self.sprite_angle), reset=False)
 		else:
