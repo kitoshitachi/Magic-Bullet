@@ -26,7 +26,7 @@ class GameObject(pygame.sprite.Sprite):
 		camera.surface.blit(self.image, camera.apply(self))
 
 	def before_update(self, delta_time):
-		'''update the velocity at this FPS
+		'''update the velocity affter FPS
 		param delta_time: FPS'''
 		self.vel = self.direction * (self.speed * delta_time)
 

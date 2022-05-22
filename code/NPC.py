@@ -97,7 +97,7 @@ class NPC(GameObject):
 					self.direction += pygame.Vector2(dist).normalize()
 
 	def update(self, delta_time):
-		'''update npc at this FPS
+		'''update npc after FPS
 		param delta_time: FPS'''
 		# self.target()
 		if self.player is None: #or self.player.mp < 10:
@@ -125,7 +125,7 @@ class NPC(GameObject):
 
 	def update_animation(self, delta_time):
 		'''
-		update the animation of NPC at this FPS
+		update the animation of NPC after FPS
 		param delta_time: FPS
 		'''
 		if self.direction.x == 0 and self.direction.y == 0:

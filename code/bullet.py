@@ -13,6 +13,10 @@ class Bullet(GameObject):
 	FIRE_SFX.set_volume(0.3)
 
 	def __init__(self,player,level):
+		'''the bullet class
+		param player: the sprite make bullet
+		param level: get the attribute level
+		'''
 		self.owner = player
 		super().__init__(
 		level=level,
@@ -32,6 +36,7 @@ class Bullet(GameObject):
 		Bullet.FIRE_SFX.play()
 
 	def obstacle_collision(self):
+		'''handle obstacle collision'''
 		def response(collison_data):
 			time, normal, _, obstacle = collison_data
 
@@ -65,6 +70,7 @@ class Bullet(GameObject):
 		self.direction = self.vel.normalize()
 
 	def player_collision(self):
+		'''handle player collision'''
 		def response(collison_data):
 			time, _, _, player = collison_data
 
@@ -82,6 +88,7 @@ class Bullet(GameObject):
 		CollisionEngine.detect_multiple(self, self.level.group_player, response)
 
 	def npc_collision(self):
+		'''handle npc collision'''
 		def response(collison_data):
 			time, _, _, npc = collison_data
 			smoke_pos = (self.hitbox.centerx + Utils.round_away_from_zero(self.vel.x * time) - (TILESIZE / 2),
@@ -94,6 +101,8 @@ class Bullet(GameObject):
 		CollisionEngine.detect_multiple(self, self.level.group_NPC, response)
 
 	def update(self, delta_time):
+		'''update bullet after FPS
+		param delta_time: FPS'''
 		self.player_collision()
 		self.obstacle_collision()
 		self.npc_collision()

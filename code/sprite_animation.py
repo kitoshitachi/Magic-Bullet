@@ -18,7 +18,8 @@ class SpriteAnimation():
 
 	def update(self, delta_time):
 		'''
-		update the animation
+		update the animation after delta_time
+		param delta_time: FPS
 		'''
 		self._current_frame += self.animation_speed * delta_time
 

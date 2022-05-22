@@ -19,7 +19,8 @@ class SmokeEffect(GameObject):
 
 	def update(self, delta_time):
 		'''
-		update the animation
+		update the animation after deltatime
+		param delta_time: FPS
 		'''
 		super().update(delta_time)
 		self.animation.update(delta_time)
