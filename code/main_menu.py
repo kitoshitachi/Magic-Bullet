@@ -1,13 +1,18 @@
-import pathlib
 import pygame
 import pygame_menu
 from assets import Assets
 from settings import *
 
-from settings import SCREEN_HEIGHT, SCREEN_WIDTH, MENU_LIGHT_GREEN, MENU_DARK_GREEN, MENU_BLUE
+from settings import *
 
 class MainMenu:
 	def __init__(self, on_start_game, surface):
+		'''
+		make main menu
+
+		param on_start_game: events
+		param surface: surface to draw main menu
+		'''
 		button_color = pygame.Color(MENU_LIGHT_GREEN)
 		border_color = pygame.Color(MENU_DARK_GREEN)
 		selection_color = pygame.Color(MENU_BLUE)
@@ -28,7 +33,7 @@ class MainMenu:
 		theme.title_font_shadow_position = pygame_menu.locals.POSITION_SOUTHEAST
 		theme.title_offset = (SCREEN_WIDTH/2 - 175, SCREEN_HEIGHT/2 - 170)
 
-		menu = pygame_menu.Menu('Magic Bullet', *surface.get_size(), theme=theme)
+		self._menu = pygame_menu.Menu('Magic Bullet', *surface.get_size(), theme=theme)
 
 		button_style = {
 			"background_color": button_color,
@@ -39,15 +44,19 @@ class MainMenu:
 			"selection_color": selection_color,
 		}
 
-		menu.add.button('Chơi', on_start_game, margin=(0, 30), **button_style)
-		menu.add.button('Thoát', pygame_menu.events.EXIT, **button_style)
+		self._menu.add.button('Chơi', on_start_game, margin=(0, 30), **button_style)
+		self._menu.add.button('Thoát', pygame_menu.events.EXIT, **button_style)
 
-		self.menu = menu
-		self.surface = surface
+		self._surface = surface
 
 	def run(self, events):
-		self.menu.update(events)
-		self.menu.draw(self.surface)
+		'''
+		params events: handle event to run
+		
+		'''
+		self._menu.update(events)
+		self._menu.draw(self._surface)
 
 	def reset(self):
+		'''reset menu'''
 		self.menu.reset()
