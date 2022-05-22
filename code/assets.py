@@ -31,6 +31,7 @@ class MovingImages:
 	_idle_sequences: Tuple[Tuple[pygame.Surface]] = field(init=False)
 
 	def __post_init__(self):
+		'''create after init'''
 		self._move_sequences = (
 			self.right_move, 
 			self.down_right_move, 
@@ -123,6 +124,7 @@ class Assets():
 	frog: MovingImages = field(init=False)
 
 	def __post_init__(self):
+		'''create after init assets'''
 		Assets.player1 = MovingImages(
 			*(Assets._create_animation_sprites(Assets.player1_img, i, 2, (30, 50)) for i in range(8)),
 			Assets._create_animation_sprites(Assets.player1_img, 8, 1, (30, 50)),
