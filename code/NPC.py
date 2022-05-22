@@ -23,7 +23,7 @@ class NPC(GameObject):
 			hitbox_inflation=(-8, -8),
 			pos=pos,
 			direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
-			speed=180)
+			speed=300)
 
 		self.Ox = pygame.math.Vector2(1, 0)
 		self.animation = SpriteAnimation(self, Assets.frog.down_idle, 4)
@@ -99,7 +99,7 @@ class NPC(GameObject):
 	def update(self, delta_time):
 		'''update npc at this FPS
 		param delta_time: FPS'''
-		self.target()
+		# self.target()
 		if self.player is None: #or self.player.mp < 10:
 			self.random_move()
 		else:
