@@ -1,7 +1,9 @@
 import itertools
+from math import atan2, degrees
 from random import choice, randint
 import pygame
 from assets import Assets
+from utils import Utils
 from settings import *
 from sprite_animation import SpriteAnimation
 from collision import CollisionEngine, CollisionResponse
@@ -19,9 +21,9 @@ class NPC(GameObject):
 			hitbox_inflation=(-8, -8),
 			pos=pos,
 			direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
-			speed=300)
+			speed=180)
 
-
+		self.Ox = pygame.math.Vector2(1, 0)
 		self.animation = SpriteAnimation(self, Assets.frog.down_idle, 4)
 		self.step = 0
 		self.max_step = randint(80,120)
@@ -37,22 +39,26 @@ class NPC(GameObject):
 		obstacles_and_boundary = itertools.chain(self.level.group_obstacle, self.level.group_boundary)
 		CollisionEngine.detect_multiple(self, obstacles_and_boundary, CollisionResponse.slide)
 
+	def has_wall_on_sight(self,line):
+		for wall in self.level.group_obstacle:
+			if len(pygame.Rect.clipline(wall.rect,line)) > 0:
+				return True
+		return False
+
 	def target(self):
-		d_max = -1
+		d_min = SCREEN_WIDTH
 		for player in self.level.group_player:
-			dx = player.rect.x - self.rect.x
-			dy = player.rect.y - self.rect.y
-			d = dx*dx+dy*dy
-			if d <= 32*32*10:
-				for wall in self.level.group_obstacle:
-					if pygame.Rect.clipline(wall.rect,self.rect.center,player.rect.center) is not None:
-						if d > d_max:
-							self.player = player
-							d_max = d
-						break
+			dist = Utils.distance(self.rect.center,player.rect.center)
+			
+			if dist > 10*32 or self.has_wall_on_sight((self.rect.center,player.rect.center)):
+				continue
+			elif d_min > dist:
+				self.player = player
+				d_min = dist
 
 	def hit(self):
 		self.time_to_live -= 1
+
 		if self.time_to_live <= 0:
 			return self.mp
 		else:
@@ -68,20 +74,30 @@ class NPC(GameObject):
 				return
 
 			self.angle = randint(0, 360)
-			self.direction = pygame.math.Vector2(1, 0).rotate(self.angle)
+			self.direction = self.Ox.rotate(self.angle)
 			self.animation.set_images(Assets.frog.move_squence(self.angle))
 
-	def update(self, delta_time):
-		# self.target()
-		if self.player is not None:
-			pass
-			# self.rect.topleft
-			# self.angle = self.direction.angle_to(pygame.math.Vector2(1, 0))
-			# self.animation.set_images(Assets.frog.move_squence(self.angle))
+	def avoid_mobs(self):
+		for NPC in self.level.group_NPC:
+			if NPC != self:
+				dist = Utils.distance(self.rect.center,NPC.rect.center)
+				if 0 < dist < AVOID_RADIUS:
+					self.direction += pygame.Vector2(dist).normalize()
 
-			# self.player = None
-		else:
+	def update(self, delta_time):
+		self.target()
+		if self.player is None or self.player.mp < 10:
 			self.random_move()
+		else:
+			pass
+			# dx = self.player.rect.centerx - self.rect.centerx
+			# dy = self.player.rect.centery - self.rect.centery
+			# self.angle = degrees(atan2(dy, dx))
+			# self.avoid_mobs()
+
+			# self.direction = self.Ox.rotate(self.angle)
+			# self.animation.set_images(Assets.frog.move_squence(self.angle))
+			# self.player = None
 		
 		self.animation.update(delta_time)
 			
@@ -91,6 +107,7 @@ class NPC(GameObject):
 		self.step += 1
 		if self.time_to_live <= 0:
 			self.kill()
+			NPC.Amount -= 1
 
 	def update_animation(self, delta_time):
 		if self.direction.x == 0 and self.direction.y == 0:
