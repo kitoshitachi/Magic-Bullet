@@ -9,6 +9,7 @@ class GameOver:
 		'''
 		param on_main_menu: event handler
 		param surface: surface to draw menu
+		param playerName: get the name player win 
 		'''
 		self._pause_surface = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
 		self._screen_shot = None
@@ -49,6 +50,9 @@ class GameOver:
 		self._surface = pygame.display.get_surface()
 
 	def run(self, events):
+		'''
+		params events: handle event and run
+		'''
 		self._menu.update(events)
 
 		self._pause_surface.fill(color=TRANSPARENT)
@@ -58,11 +62,16 @@ class GameOver:
 		self._surface.blit(self._pause_surface, (0, 0))
 
 	def has_taken_screen_shot(self):
+		'''check take screen shot'''
 		return self._screen_shot is not None
 
 	def take_screen_shot(self):
+		'''
+		make a screen shot surface
+		'''
 		self._screen_shot = self._surface.copy()
 
 	def reset(self):
+		'''reset menu'''
 		self._menu.full_reset()
 		self._menu.select_widget(self._first_widget)

@@ -53,8 +53,7 @@ class PauseMenu:
 
 	def run(self, events):
 		'''
-		params events: handle event to run
-		
+		params events: handle event and run
 		'''
 		self._menu.update(events)
 		
