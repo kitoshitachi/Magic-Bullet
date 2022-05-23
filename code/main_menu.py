@@ -3,8 +3,6 @@ import pygame_menu
 from assets import Assets
 from settings import *
 
-from settings import *
-
 class MainMenu:
 	def __init__(self, on_start_game, surface):
 		'''

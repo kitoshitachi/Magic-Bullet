@@ -1,4 +1,3 @@
-import itertools
 from random import choice, randint
 import pygame
 from assets import Assets
