@@ -116,7 +116,7 @@ class Player(GameObject):
 
 		hits = pygame.sprite.spritecollide(self,self._level.group_NPC,False,lambda one,two: one.hitbox.colliderect(two.hitbox))
 		for npc in hits:
-			mana = 2
+			mana = 40/FPS
 			self.regen_timer.reset()
 			if self.mp < mana:
 				npc.mp += self.mp

@@ -1,3 +1,4 @@
+from math import atan2, degrees
 from random import choice, randint
 import pygame
 from assets import Assets
@@ -22,7 +23,7 @@ class NPC(GameObject):
 			hitbox_inflation=(-8, -8),
 			pos=pos,
 			_direction=pygame.math.Vector2(randint(0, 1), randint(0, 1)),
-			speed=300)
+			speed=NPC_SPEED)
 
 		self.Ox = pygame.math.Vector2(1, 0)
 		self._animation = SpriteAnimation(self, Assets.frog.down_idle, 4)
@@ -57,7 +58,7 @@ class NPC(GameObject):
 		for player in self._level.group_player:
 			dist = Utils.distance(self._rect.center,player.rect.center)
 			
-			if dist > 10*32 or self.has_wall_on_sight((self._rect.center,player.rect.center)):
+			if dist > 7*32 or self.has_wall_on_sight((self._rect.center,player.rect.center)):
 				continue
 			elif d_min > dist:
 				self.player = player
@@ -97,19 +98,18 @@ class NPC(GameObject):
 	def update(self, delta_time):
 		'''update npc after FPS
 		param delta_time: FPS'''
-		# self.target()
-		if self.player is None: #or self.player.mp < 10:
+		self.target()
+		if self.player is None or self.player.mp < 10:
 			self.random_move()
 		else:
-			pass
-			# dx = self.player.rect.centerx - self._rect.centerx
-			# dy = self.player.rect.centery - self._rect.centery
-			# self.angle = degrees(atan2(dy, dx))
-			# self.avoid_mobs()
+			dx = self.player.rect.centerx - self._rect.centerx
+			dy = self.player.rect.centery - self._rect.centery
+			self.angle = degrees(atan2(dy, dx))
+			self.avoid_mobs()
 
-			# self._direction = self.Ox.rotate(self.angle)
-			# self._animation.set_images(Assets.frog.move_squence(self.angle))
-			# self.player = None
+			self._direction = self.Ox.rotate(self.angle)
+			self._animation.set_images(Assets.frog.move_squence(self.angle))
+			self.player = None
 		
 		self._animation.update(delta_time)
 			
