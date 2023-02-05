@@ -9,6 +9,9 @@
 3. Cài các dependency: `pip install -r requirements.txt`
 
 4. Chạy game: chạy file main.py `python code/main.py`
+
+note: nếu dùng annaconda thì conda activate env trong đó env là tên môi trường ảo cài requirements.txt
+
 ## Gameplay :
 -	Giết NPC để hồi mana
 -	Npc bị bắn sẽ dí theo người bắn ( đụng phải sẽ làm mất mana của người bắn)
