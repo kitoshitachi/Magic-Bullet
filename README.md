@@ -10,7 +10,7 @@
 
 4. Chạy game: chạy file main.py `python code/main.py`
 
-note: nếu dùng annaconda thì conda activate env trong đó env là tên môi trường ảo cài requirements.txt
+note: nếu dùng annaconda thì 'conda activate env' trong đó env là tên môi trường ảo cài requirements.txt
 
 ## Gameplay :
 -	Giết NPC để hồi mana
